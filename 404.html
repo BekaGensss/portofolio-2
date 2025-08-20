@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    const path = window.location.pathname;
+    const repo = "portofolio-2"; // Ganti dengan nama repositori Anda
+    const newPath = path.substring(path.indexOf(repo) + repo.length);
+    window.location.replace(
+      window.location.protocol + "//" + window.location.host + '/' + repo + '/#' + newPath
+    );
+  </script>
+</head>
+<body>
+</body>
+</html>
