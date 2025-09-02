@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Particles from 'react-tsparticles';
 import { loadSlim } from 'tsparticles-slim';
 
@@ -9,7 +8,6 @@ import About from './components/About';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import NotFound from './components/NotFound'; // Import komponen NotFound
 
 const App = () => {
     const getInitialTheme = () => {
@@ -43,8 +41,9 @@ const App = () => {
         }, 2000);
     }, []);
 
+    // PASTIKAN SEMUA KODE BERADA DI DALAM SATU RETURN STATEMENT
     return (
-        <BrowserRouter>
+        <>
             <div className={`loader-container ${isLoading ? '' : 'hidden'}`}>
                 <div className="loader"></div>
             </div>
@@ -99,24 +98,17 @@ const App = () => {
                 />
 
                 <div className="relative z-10 font-sans">
-                    <Routes>
-                        <Route path="/" element={
-                            <>
-                                <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-                                <main>
-                                    <Hero isDarkMode={isDarkMode} />
-                                    <About />
-                                    <Projects />
-                                    <Contact />
-                                </main>
-                                <Footer />
-                            </>
-                        } />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
+                    <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+                    <main>
+                        <Hero isDarkMode={isDarkMode} />
+                        <About />
+                        <Projects />
+                        <Contact />
+                    </main>
+                    <Footer />
                 </div>
             </div>
-        </BrowserRouter>
+        </>
     );
 };
 

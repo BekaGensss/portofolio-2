@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 // Varian untuk animasi masuk item navigasi
@@ -31,7 +30,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo atau nama portofolio */}
                 <motion.div variants={itemVariants} className="text-xl font-bold font-mono">
-                    {/* Menggunakan <a> dengan href="#" untuk kembali ke bagian paling atas halaman */}
                     <a href="#" className={`text-teal-500 transition-colors duration-300`}>
                         Portofolio
                     </a>
@@ -41,7 +39,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
                 <div className="flex items-center space-x-6 md:space-x-8">
                     <ul className={`flex space-x-6 md:space-x-8 ${textColor}`}>
                         <motion.li variants={itemVariants}>
-                            {/* Link Home yang mengarah ke id="home" */}
                             <a href="#home" className={`font-semibold ${hoverColor} transition-colors duration-300`}>Home</a>
                         </motion.li>
                         <motion.li variants={itemVariants}>
