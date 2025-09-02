@@ -30,9 +30,9 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo atau nama portofolio */}
                 <motion.div variants={itemVariants} className="text-xl font-bold font-mono">
-                    <a href="#" className={`text-teal-500 transition-colors duration-300`}>
+                    <span className={`text-teal-500 transition-colors duration-300`}>
                         Portofolio
-                    </a>
+                    </span>
                 </motion.div>
 
                 {/* Menu Navigasi */}
