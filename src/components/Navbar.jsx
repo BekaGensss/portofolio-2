@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi';
 
 const itemVariants = {
@@ -33,14 +33,14 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             className={`fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md shadow-md ${bgColor} transition-colors duration-500`}
         >
             <div className="container mx-auto flex justify-between items-center relative">
-                <motion.div variants={itemVariants} className="text-xl font-bold font-sans"> {/* Pastikan font-sans ada di sini */}
+                <motion.div variants={itemVariants} className="text-xl font-bold font-sans">
                     <span className={`text-teal-500 transition-colors duration-300`}>
                         Portofolio
                     </span>
                 </motion.div>
 
                 <div className="hidden md:flex items-center space-x-6 md:space-x-8">
-                    <ul className={`flex space-x-6 md:space-x-8 ${textColor} font-sans`}> {/* Tambahkan font-sans di sini */}
+                    <ul className={`flex space-x-6 md:space-x-8 ${textColor} font-sans`}>
                         <motion.li variants={itemVariants}>
                             <a href="#home" className={`font-semibold ${hoverColor} transition-colors duration-300`}>Home</a>
                         </motion.li>
@@ -87,32 +87,26 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
                 </div>
             </div>
 
-            <AnimatePresence>
-                {isMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, maxHeight: 0 }}
-                        animate={{ opacity: 1, maxHeight: '300px' }}
-                        exit={{ opacity: 0, maxHeight: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className={`md:hidden mt-4 pt-4 border-t border-gray-300 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 shadow-lg`}
-                    >
-                        <ul className={`flex flex-col space-y-4 ${textColor} font-sans`}> {/* Tambahkan font-sans di sini */}
-                            <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
-                                <a href="#home" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Home</a>
-                            </motion.li>
-                            <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
-                                <a href="#about" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Tentang</a>
-                            </motion.li>
-                            <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
-                                <a href="#projects" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Proyek</a>
-                            </motion.li>
-                            <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
-                                <a href="#contact" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Kontak</a>
-                            </motion.li>
-                        </ul>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Menu Navigasi Mobile - Sekarang menggunakan animasi CSS murni */}
+            <div
+                className={`md:hidden mt-4 pt-4 border-t border-gray-300 dark:border-gray-700 overflow-hidden shadow-lg transform transition-all duration-300 ease-in-out
+                ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+                <ul className={`flex flex-col space-y-4 ${textColor} font-sans`}>
+                    <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
+                        <a href="#home" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Home</a>
+                    </motion.li>
+                    <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
+                        <a href="#about" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Tentang</a>
+                    </motion.li>
+                    <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
+                        <a href="#projects" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Proyek</a>
+                    </motion.li>
+                    <motion.li onClick={() => setIsMenuOpen(false)} variants={itemVariants}>
+                        <a href="#contact" className={`block py-2 text-center font-semibold text-lg ${hoverColor} transition-colors duration-300`}>Kontak</a>
+                    </motion.li>
+                </ul>
+            </div>
         </motion.nav>
     );
 };
