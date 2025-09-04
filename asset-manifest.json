@@ -1,21 +1,39 @@
 {
   "files": {
-    "main.css": "/portofolio-2/static/css/main.ebf6f7ba.css",
-    "main.js": "/portofolio-2/static/js/main.4b150684.js",
+    "main.css": "/portofolio-2/static/css/main.fb1199ef.css",
+    "main.js": "/portofolio-2/static/js/main.d1f4f1d0.js",
     "static/js/453.3aab4259.chunk.js": "/portofolio-2/static/js/453.3aab4259.chunk.js",
     "static/media/project1-gambar1.png": "/portofolio-2/static/media/project1-gambar1.46a85d515a116a0130a8.png",
     "static/media/project1-gambar2.png": "/portofolio-2/static/media/project1-gambar2.2da4ea65a77bc1e163b4.png",
     "static/media/project3-gambar1.png": "/portofolio-2/static/media/project3-gambar1.605f880d0ec9458588d9.png",
     "static/media/project3-gambar2.png": "/portofolio-2/static/media/project3-gambar2.fa56f591e320367bce2c.png",
+    "static/media/poppins-devanagari-400-normal.woff": "/portofolio-2/static/media/poppins-devanagari-400-normal.421fe9869ff4b58e2d7b.woff",
+    "static/media/poppins-devanagari-600-normal.woff": "/portofolio-2/static/media/poppins-devanagari-600-normal.1c97cee145d08449ab61.woff",
+    "static/media/poppins-devanagari-700-normal.woff": "/portofolio-2/static/media/poppins-devanagari-700-normal.de46590351f7df77172f.woff",
+    "static/media/poppins-devanagari-400-normal.woff2": "/portofolio-2/static/media/poppins-devanagari-400-normal.d2ee5e6ea17bffe3bf58.woff2",
+    "static/media/poppins-devanagari-600-normal.woff2": "/portofolio-2/static/media/poppins-devanagari-600-normal.33d4dca119756bcfeb0c.woff2",
+    "static/media/poppins-devanagari-700-normal.woff2": "/portofolio-2/static/media/poppins-devanagari-700-normal.305c44fc8fa866291876.woff2",
     "static/media/project2-gambar2.png": "/portofolio-2/static/media/project2-gambar2.b4d767c48ad7a99eba8e.png",
     "static/media/project2-gambar1.png": "/portofolio-2/static/media/project2-gambar1.4aa1cc139b3647948c5e.png",
+    "static/media/poppins-latin-600-normal.woff": "/portofolio-2/static/media/poppins-latin-600-normal.c0dcdaeaab8caa158cb9.woff",
+    "static/media/poppins-latin-400-normal.woff": "/portofolio-2/static/media/poppins-latin-400-normal.1458587c0aa7cd06b82b.woff",
+    "static/media/poppins-latin-700-normal.woff": "/portofolio-2/static/media/poppins-latin-700-normal.cd04c2ad00870c9ceebf.woff",
+    "static/media/poppins-latin-600-normal.woff2": "/portofolio-2/static/media/poppins-latin-600-normal.91145014c0350c248ed2.woff2",
+    "static/media/poppins-latin-400-normal.woff2": "/portofolio-2/static/media/poppins-latin-400-normal.405055dd680fa1dcdfa2.woff2",
+    "static/media/poppins-latin-700-normal.woff2": "/portofolio-2/static/media/poppins-latin-700-normal.d86662fe776dae29ea78.woff2",
+    "static/media/poppins-latin-ext-400-normal.woff": "/portofolio-2/static/media/poppins-latin-ext-400-normal.7e12786771ac4a8e6a5c.woff",
+    "static/media/poppins-latin-ext-600-normal.woff": "/portofolio-2/static/media/poppins-latin-ext-600-normal.ecb76658948cb4994ec6.woff",
+    "static/media/poppins-latin-ext-700-normal.woff": "/portofolio-2/static/media/poppins-latin-ext-700-normal.0891add22376e17f583d.woff",
+    "static/media/poppins-latin-ext-400-normal.woff2": "/portofolio-2/static/media/poppins-latin-ext-400-normal.d7c074a9c34fe9785f69.woff2",
+    "static/media/poppins-latin-ext-600-normal.woff2": "/portofolio-2/static/media/poppins-latin-ext-600-normal.62a35c4d2c25efed9019.woff2",
+    "static/media/poppins-latin-ext-700-normal.woff2": "/portofolio-2/static/media/poppins-latin-ext-700-normal.51cc1e159ae5f0b8ec5c.woff2",
     "index.html": "/portofolio-2/index.html",
-    "main.ebf6f7ba.css.map": "/portofolio-2/static/css/main.ebf6f7ba.css.map",
-    "main.4b150684.js.map": "/portofolio-2/static/js/main.4b150684.js.map",
+    "main.fb1199ef.css.map": "/portofolio-2/static/css/main.fb1199ef.css.map",
+    "main.d1f4f1d0.js.map": "/portofolio-2/static/js/main.d1f4f1d0.js.map",
     "453.3aab4259.chunk.js.map": "/portofolio-2/static/js/453.3aab4259.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ebf6f7ba.css",
-    "static/js/main.4b150684.js"
+    "static/css/main.fb1199ef.css",
+    "static/js/main.d1f4f1d0.js"
   ]
 }
