@@ -41,14 +41,22 @@ const App = () => {
         }, 2000);
     }, []);
 
-    // PASTIKAN SEMUA KODE BERADA DI DALAM SATU RETURN STATEMENT
     return (
         <>
             <div className={`loader-container ${isLoading ? '' : 'hidden'}`}>
                 <div className="loader"></div>
             </div>
 
-            <div className={`min-h-screen ${isDarkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-white text-gray-900'} transition-colors duration-500 relative`}>
+            {/* PERBAIKAN: Tambahkan kelas font-sans pada div terluar */}
+            {/* PERBAIKAN: Tambahkan kelas Flexbox untuk tata letak yang sempurna */}
+            <div className={`
+                min-h-screen
+                ${isDarkMode ? 'dark bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}
+                transition-colors duration-500
+                relative
+                flex flex-col
+                font-sans
+            `}>
                 
                 <Particles
                     id="tsparticles"
@@ -97,9 +105,10 @@ const App = () => {
                     }}
                 />
 
-                <div className="relative z-10 font-sans">
+                {/* PERBAIKAN: Gunakan Flexbox untuk mendorong footer ke bawah */}
+                <div className="relative z-10 flex flex-col flex-grow">
                     <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-                    <main>
+                    <main className="flex-grow">
                         <Hero isDarkMode={isDarkMode} />
                         <About />
                         <Projects />

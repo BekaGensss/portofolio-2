@@ -47,7 +47,7 @@ const textColor = isDarkMode ? 'text-gray-100' : 'text-gray-900';
 const highlightColor = isDarkMode ? 'text-teal-400' : 'text-teal-600';
 
 return (
-    <section id="home" className="hero min-h-screen flex items-center justify-center pt-24 pb-12 text-center relative z-10 overflow-hidden">
+    <section id="home" className="hero flex items-center justify-center pt-24 pb-12 text-center relative z-10 overflow-hidden">
         <motion.div
             initial="hidden"
             animate="visible"

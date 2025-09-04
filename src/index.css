@@ -1,6 +1,18 @@
+/* src/index.css */
+
+/* --- PERBAIKAN: Impor font Poppins dari paket NPM (harus di atas) --- */
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Terapkan font ke seluruh halaman */
+body {
+    font-family: 'Poppins', sans-serif;
+}
 
 /* CSS kustom untuk efek loading dan scrollbar */
 .loader-container {
