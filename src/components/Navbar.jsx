@@ -30,7 +30,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
                     }
                 }
             }}
-            className={`fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md shadow-md ${bgColor} transition-colors duration-500`}
+            className={`fixed top-0 left-0 w-full z-50 px-4 py-2 md:py-4 backdrop-blur-md shadow-md ${bgColor} transition-colors duration-500`}
         >
             <div className="container mx-auto flex justify-between items-center relative">
                 <motion.div variants={itemVariants} className="text-xl font-bold font-sans">
