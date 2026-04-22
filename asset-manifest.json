@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/portofolio-2/static/css/main.3322d1f5.css",
-    "main.js": "/portofolio-2/static/js/main.b6d5bf63.js",
+    "main.js": "/portofolio-2/static/js/main.24898e5c.js",
     "static/js/453.3aab4259.chunk.js": "/portofolio-2/static/js/453.3aab4259.chunk.js",
     "static/media/project1-gambar1.png": "/portofolio-2/static/media/project1-gambar1.46a85d515a116a0130a8.png",
     "static/media/project1-gambar2.png": "/portofolio-2/static/media/project1-gambar2.2da4ea65a77bc1e163b4.png",
@@ -15,7 +15,6 @@
     "static/media/project2-gambar1.png": "/portofolio-2/static/media/project2-gambar1.4aa1cc139b3647948c5e.png",
     "static/media/poppins-latin-600-normal.woff": "/portofolio-2/static/media/poppins-latin-600-normal.c0dcdaeaab8caa158cb9.woff",
     "static/media/poppins-latin-400-normal.woff": "/portofolio-2/static/media/poppins-latin-400-normal.1458587c0aa7cd06b82b.woff",
-    "static/media/typed.cjs": "/portofolio-2/static/media/typed.1daf35f800430d121e00.cjs",
     "static/media/poppins-latin-600-normal.woff2": "/portofolio-2/static/media/poppins-latin-600-normal.91145014c0350c248ed2.woff2",
     "static/media/poppins-latin-400-normal.woff2": "/portofolio-2/static/media/poppins-latin-400-normal.405055dd680fa1dcdfa2.woff2",
     "static/media/poppins-latin-ext-400-normal.woff": "/portofolio-2/static/media/poppins-latin-ext-400-normal.7e12786771ac4a8e6a5c.woff",
@@ -24,11 +23,11 @@
     "static/media/poppins-latin-ext-600-normal.woff2": "/portofolio-2/static/media/poppins-latin-ext-600-normal.62a35c4d2c25efed9019.woff2",
     "index.html": "/portofolio-2/index.html",
     "main.3322d1f5.css.map": "/portofolio-2/static/css/main.3322d1f5.css.map",
-    "main.b6d5bf63.js.map": "/portofolio-2/static/js/main.b6d5bf63.js.map",
+    "main.24898e5c.js.map": "/portofolio-2/static/js/main.24898e5c.js.map",
     "453.3aab4259.chunk.js.map": "/portofolio-2/static/js/453.3aab4259.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.3322d1f5.css",
-    "static/js/main.b6d5bf63.js"
+    "static/js/main.24898e5c.js"
   ]
 }
