@@ -245,9 +245,9 @@ const Hero = () => {
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            pointerEvents: 'none' /* Container doesn't block clicks */
+                            pointerEvents: 'none'
                         }}>
-                            <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
+                            <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', display: 'flex', justifyContent: 'center' }}>
                                 <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
                             </div>
                         </div>
@@ -276,7 +276,7 @@ const Hero = () => {
                     .hero-flex-row {
                         flex-direction: column-reverse !important;
                         text-align: center;
-                        gap: 10px !important;
+                        gap: 0px !important;
                     }
                     .hero-flex-row > div:first-child {
                         flex: 1 1 auto !important;
@@ -284,24 +284,25 @@ const Hero = () => {
                         display: flex;
                         flex-direction: column;
                         align-items: center;
+                        padding-bottom: 40px;
                     }
                     .hero-badge-container {
                         width: 100%;
-                        height: 500px !important;
+                        height: 480px !important;
                         margin-bottom: 0px;
-                        margin-top: -30px;
+                        margin-top: -40px;
                     }
                     .hero-flex-row h1 {
-                        font-size: clamp(2.8rem, 12vw, 4.5rem) !important;
+                        font-size: clamp(2.5rem, 12vw, 4rem) !important;
                     }
                 }
                 
                 @media(max-width:480px) {
                     #home {
-                        padding-top: 60px !important;
+                        padding-top: 50px !important;
                     }
                     .hero-badge-container {
-                        height: 420px !important;
+                        height: 400px !important;
                     }
                 }
             `}</style>
