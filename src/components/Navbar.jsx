@@ -187,9 +187,25 @@ const Navbar = () => {
                     }}>BARA</span>
                 </div>
 
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <LangSwitch lang={lang} toggleLang={toggleLang} />
-                    <ThemeSwitch isDark={isDark} toggleTheme={toggleTheme} />
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <div style={{
+                        height: 34, borderRadius: 100,
+                        background: isDark ? 'rgba(14,14,14,0.92)' : 'rgba(240,240,235,0.92)',
+                        border: `1px solid ${theme.border}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        padding: '0 10px',
+                    }}>
+                        <LangSwitch lang={lang} toggleLang={toggleLang} />
+                    </div>
+                    <div style={{
+                        height: 34, borderRadius: 100,
+                        background: isDark ? 'rgba(14,14,14,0.92)' : 'rgba(240,240,235,0.92)',
+                        border: `1px solid ${theme.border}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        padding: '0 10px',
+                    }}>
+                        <ThemeSwitch isDark={isDark} toggleTheme={toggleTheme} />
+                    </div>
                     <button onClick={() => setOpen(o => !o)} aria-label="Menu" style={{
                         width: 34, height: 34, borderRadius: 9,
                         background: open ? '#d4af37' : 'transparent',

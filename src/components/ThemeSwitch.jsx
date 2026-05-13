@@ -34,7 +34,7 @@ const StyledWrapper = styled.div`
   justify-content: center;
 
   .switch {
-    font-size: clamp(1.8px, 0.5vw, 2.4px); /* Controls scale: ~36px to 48px width */
+    font-size: 2.2px; /* Fixed scale: ~44px width, 22px height */
     position: relative;
     display: inline-flex;
     align-items: center;

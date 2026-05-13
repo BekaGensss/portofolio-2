@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Typed } from 'react-typed';
 import { FiDownload, FiArrowRight, FiGithub } from 'react-icons/fi';
 import { useTheme } from '../ThemeContext';
+import DraggableBadge from './DraggableBadge';
 
 /* Satu band ticker — lebih tebal dan smooth */
 const Band = ({ top, rotate, dir, speed, isDark }) => {
@@ -233,56 +234,48 @@ const Hero = () => {
                             </motion.div>
                         </div>
 
-                        {/* RIGHT: elegant circular photo with floating elements */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
-                            className="hero-photo-wrap"
-                            style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                        >
-                            {/* Decorative ring */}
-                            <motion.div 
-                                animate={{ rotate: 360 }} 
-                                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                                style={{
-                                    position: 'absolute',
-                                    width: 'clamp(260px,36vw,440px)',
-                                    height: 'clamp(260px,36vw,440px)',
-                                    borderRadius: '50%',
-                                    border: `1px dashed ${theme.borderAccent}`,
-                                    opacity: 0.4,
-                                    zIndex: 0
-                                }}
-                            />
-                            
-                            {/* Inner ring */}
-                            <motion.div 
-                                animate={{ rotate: -360 }} 
-                                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                                style={{
-                                    position: 'absolute',
-                                    width: 'clamp(220px,32vw,390px)',
-                                    height: 'clamp(220px,32vw,390px)',
-                                    borderRadius: '50%',
-                                    border: `1px solid ${theme.border}`,
-                                    opacity: 0.8,
-                                    zIndex: 0
-                                }}
-                            />
+                            {/* RIGHT: elegant 3D Draggable Badge */}
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
+                                className="hero-photo-wrap"
+                                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px', width: '100%' }}
+                            >
+                                {/* We keep the rings for the glowing aesthetic */}
+                                {/* Decorative ring */}
+                                <motion.div 
+                                    animate={{ rotate: 360 }} 
+                                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                                    style={{
+                                        position: 'absolute',
+                                        width: 'clamp(260px,36vw,440px)',
+                                        height: 'clamp(260px,36vw,440px)',
+                                        borderRadius: '50%',
+                                        border: `1px dashed ${theme.borderAccent}`,
+                                        opacity: 0.4,
+                                        zIndex: 0
+                                    }}
+                                />
+                                
+                                {/* Inner ring */}
+                                <motion.div 
+                                    animate={{ rotate: -360 }} 
+                                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                                    style={{
+                                        position: 'absolute',
+                                        width: 'clamp(220px,32vw,390px)',
+                                        height: 'clamp(220px,32vw,390px)',
+                                        borderRadius: '50%',
+                                        border: `1px solid ${theme.border}`,
+                                        opacity: 0.8,
+                                        zIndex: 0
+                                    }}
+                                />
 
-                            <div style={{ position: 'relative', zIndex: 2 }}>
-                                <div style={{
-                                    width: 'clamp(200px,28vw,340px)',
-                                    height: 'clamp(200px,28vw,340px)',
-                                    borderRadius: '50%', overflow: 'hidden',
-                                    border: `4px solid ${theme.bgCard}`,
-                                    boxShadow: `0 0 0 8px ${isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)'}, 0 30px 60px rgba(0,0,0,0.3)`,
-                                    background: theme.bgCard,
-                                }}>
-                                    <img src={process.env.PUBLIC_URL + '/profile.jpg'} alt="Bara Kusuma"
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+                                {/* The 3D Badge overlays here */}
+                                <div style={{ position: 'absolute', inset: -100, zIndex: 10 }}>
+                                    <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
                                 </div>
-                            </div>
 
                             {/* Open Source Contributor floating badge */}
                             <div className="hero-badge"
