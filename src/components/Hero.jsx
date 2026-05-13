@@ -244,9 +244,12 @@ const Hero = () => {
                             zIndex: 10,
                             display: 'flex',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            pointerEvents: 'none' /* Container doesn't block clicks */
                         }}>
-                            <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
+                            <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
+                                <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
+                            </div>
                         </div>
                     </div>
                 </motion.div>
@@ -273,7 +276,7 @@ const Hero = () => {
                     .hero-flex-row {
                         flex-direction: column-reverse !important;
                         text-align: center;
-                        gap: 20px !important;
+                        gap: 10px !important;
                     }
                     .hero-flex-row > div:first-child {
                         flex: 1 1 auto !important;
@@ -284,21 +287,21 @@ const Hero = () => {
                     }
                     .hero-badge-container {
                         width: 100%;
-                        height: 480px !important;
+                        height: 500px !important;
                         margin-bottom: 0px;
-                        margin-top: -20px;
+                        margin-top: -30px;
                     }
                     .hero-flex-row h1 {
-                        font-size: clamp(3rem, 12vw, 5rem) !important;
+                        font-size: clamp(2.8rem, 12vw, 4.5rem) !important;
                     }
                 }
                 
                 @media(max-width:480px) {
                     #home {
-                        padding-top: 80px !important;
+                        padding-top: 60px !important;
                     }
                     .hero-badge-container {
-                        height: 400px !important;
+                        height: 420px !important;
                     }
                 }
             `}</style>

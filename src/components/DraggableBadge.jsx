@@ -7,7 +7,7 @@ import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
 
-// Preload assets for speed
+// Preload assets
 useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
 
 export default function DraggableBadge({ photoUrl }) {
@@ -16,8 +16,7 @@ export default function DraggableBadge({ photoUrl }) {
       width: '100%', 
       height: '100%', 
       position: 'relative',
-      touchAction: 'none',
-      overflow: 'hidden'
+      touchAction: 'none'
     }}>
       <Canvas 
         camera={{ position: [0, 0, 13], fov: 25 }} 
@@ -48,8 +47,9 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
   
   const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
   const userTexture = useTexture(photoUrl)
+  userTexture.flipY = true // Standard orientation
   
-  // Custom band texture with user name
+  // Custom band texture with name
   const bandTexture = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = 1024
@@ -71,7 +71,7 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
     return texture
   }, [])
   
-  const { width, height } = useThree((state) => state.size)
+  const { size } = useThree()
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
   const [dragged, drag] = useState(false)
   const [hovered, hover] = useState(false)
@@ -97,19 +97,24 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
       card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z })
     }
     if (fixed.current) {
-      // Fix most of the jitter when over pulling the card
+      // Fix jitter
       ;[j1, j2].forEach((ref) => {
         if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation())
         const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())))
         ref.current.lerped.lerp(ref.current.translation(), delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)))
       })
-      // Calculate catmul curve
+      // Update curve points
       curve.points[0].copy(j3.current.translation())
       curve.points[1].copy(j2.current.lerped)
       curve.points[2].copy(j1.current.lerped)
       curve.points[3].copy(fixed.current.translation())
-      band.current.geometry.setPoints(curve.getPoints(32))
-      // Tilt it back towards the screen
+      
+      // Update line geometry points safely
+      if (band.current?.geometry) {
+        band.current.geometry.setPoints(curve.getPoints(32))
+      }
+      
+      // Tilt card
       ang.copy(card.current.angvel())
       rot.copy(card.current.rotation())
       card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z })
@@ -120,7 +125,8 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
 
   return (
     <>
-      <group position={[0, 6, 0]}>
+      {/* Anchor moved even higher to ensure it's off-screen */}
+      <group position={[0, 7, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -146,7 +152,7 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
             onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
             onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}
           >
-            {/* The Vercel Card Mesh */}
+            {/* Card Body */}
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial 
                 color="#0a0a0a" 
@@ -157,9 +163,9 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
               />
             </mesh>
             
-            {/* The User Photo - Overlay on the card */}
-            <mesh position={[0, 0, 0.01]} rotation={[0, 0, 0]}>
-              <planeGeometry args={[0.7, 1]} />
+            {/* User Photo - FIXED Aspect Ratio and Placement */}
+            <mesh position={[0, 0.2, 0.012]}>
+              <planeGeometry args={[0.6, 0.8]} />
               <meshBasicMaterial map={userTexture} transparent={true} />
             </mesh>
 
@@ -168,12 +174,15 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
           </group>
         </RigidBody>
       </group>
+      
+      {/* The Lanyard (Band) */}
       <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial 
+          transparent
           color="white" 
           depthTest={false} 
-          resolution={[width, height]} 
+          resolution={[size.width, size.height]} 
           useMap 
           map={bandTexture} 
           repeat={[-4, 1]} 
