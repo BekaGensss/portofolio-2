@@ -1,15 +1,11 @@
 import * as THREE from 'three'
-import { useEffect, useRef, useState, Suspense } from 'react'
+import { useEffect, useRef, useState, Suspense, useMemo } from 'react'
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
-import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
+import { useTexture, Environment, Lightformer, RoundedBox } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
-
-// Preload Vercel assets
-useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
-useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
 
 export default function DraggableBadge({ photoUrl }) {
   return (
@@ -17,9 +13,14 @@ export default function DraggableBadge({ photoUrl }) {
       width: '100%', 
       height: '100%', 
       position: 'relative',
-      minHeight: '500px'
+      minHeight: '500px',
+      touchAction: 'none'
     }}>
-      <Canvas camera={{ position: [0, 0, 13], fov: 25 }} style={{ pointerEvents: 'auto' }}>
+      <Canvas 
+        camera={{ position: [0, 0, 13], fov: 25 }} 
+        style={{ pointerEvents: 'auto', touchAction: 'none' }}
+        eventPrefix="client"
+      >
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
           <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
@@ -42,9 +43,31 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3() // prettier-ignore
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   
-  const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
-  const bandTexture = useTexture('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
   const userTexture = useTexture(photoUrl)
+  userTexture.flipY = false // Ensure it's not upside down
+
+  // Create custom band texture with "BARA KUSUMA"
+  const bandTexture = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1024
+    canvas.height = 128
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#000000'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillStyle = '#FFFFFF'
+    ctx.font = 'bold 80px Outfit, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    const text = 'BARA KUSUMA • '
+    const textWidth = ctx.measureText(text).width
+    for (let i = 0; i < 10; i++) {
+      ctx.fillText(text, i * textWidth + textWidth / 2, canvas.height / 2)
+    }
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    texture.repeat.set(1, 1)
+    return texture
+  }, [])
   
   const { width, height } = useThree((state) => state.size)
   const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
@@ -92,11 +115,11 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
   })
 
   curve.curveType = 'chordal'
-  bandTexture.wrapS = bandTexture.wrapT = THREE.RepeatWrapping
 
   return (
     <>
-      <group position={[0, 4, 0]}>
+      {/* Anchor point moved higher for longer lanyard that touches the top */}
+      <group position={[0, 5.5, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -107,30 +130,40 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
         <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
-          <group
-            scale={2.25}
-            position={[0, -1.2, -0.05]}
-            onPointerOver={() => hover(true)}
-            onPointerOut={() => hover(false)}
-            onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
-            onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}>
-            <mesh geometry={nodes.card.geometry}>
-              <meshPhysicalMaterial 
-                map={userTexture} 
-                map-anisotropy={16} 
-                clearcoat={1} 
-                clearcoatRoughness={0.15} 
-                roughness={0.3} 
-                metalness={0.5} 
-              />
+        <RigidBody 
+          position={[0, -2, 0]} 
+          ref={card} 
+          {...segmentProps} 
+          type={dragged ? 'kinematicPosition' : 'dynamic'}
+          onPointerOver={() => hover(true)}
+          onPointerOut={() => hover(false)}
+          onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
+          onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}
+        >
+          <CuboidCollider args={[0.8, 1.125, 0.05]} />
+          
+          {/* Custom Card Mesh for full photo and better design */}
+          <group position={[0, -1.1, 0]}>
+            {/* Card Base */}
+            <RoundedBox args={[1.6, 2.25, 0.05]} radius={0.05} smoothness={4}>
+              <meshStandardMaterial color="#0a0a0a" metalness={0.8} roughness={0.2} />
+            </RoundedBox>
+            
+            {/* User Photo - Full Front */}
+            <mesh position={[0, 0, 0.03]}>
+              <planeGeometry args={[1.5, 2.15]} />
+              <meshBasicMaterial map={userTexture} />
             </mesh>
-            <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
-            <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
+            
+            {/* Top Clip Hole */}
+            <mesh position={[0, 1.125 - 0.1, 0]}>
+              <cylinderGeometry args={[0.08, 0.08, 0.1, 16]} rotation={[Math.PI / 2, 0, 0]} />
+              <meshStandardMaterial color="#333" metalness={1} roughness={0.1} />
+            </mesh>
           </group>
         </RigidBody>
       </group>
+      
       <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial 
@@ -139,7 +172,7 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
           resolution={[width, height]} 
           useMap 
           map={bandTexture} 
-          repeat={[-3, 1]} 
+          repeat={[-4, 1]} 
           lineWidth={1} 
         />
       </mesh>
