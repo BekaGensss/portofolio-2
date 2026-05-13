@@ -117,8 +117,12 @@ const Hero = () => {
             </div>
 
             {/* === CONTENT === */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 5 }}>
+                <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
+            </div>
+
             <div style={{
-                position: 'relative', zIndex: 3,
+                position: 'relative', zIndex: 10,
                 maxWidth: 1200, width: '100%',
                 margin: '0 auto',
                 padding: '0 clamp(16px,4vw,40px)',
@@ -234,18 +238,10 @@ const Hero = () => {
                             </motion.div>
                         </div>
 
-                            {/* RIGHT: elegant 3D Draggable Badge */}
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
-                                className="hero-photo-wrap"
-                                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: '450px', height: 'clamp(400px, 60vh, 600px)', zIndex: 10 }}
-                            >
-                                {/* The 3D Badge overlays here */}
-                                <div style={{ position: 'absolute', inset: -50, zIndex: 10 }}>
-                                    <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
-                                </div>
-                            </motion.div>
+                        {/* RIGHT: Empty space for the 3D badge to hang */}
+                        <div style={{ flex: '1 1 400px', minWidth: 0, height: 'clamp(400px, 60vh, 600px)', pointerEvents: 'none' }}>
+                            {/* The 3D canvas is full-screen in the background, but visually the badge will hang here */}
+                        </div>
                     </div>
                 </motion.div>
             </div>
