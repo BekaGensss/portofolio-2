@@ -13,13 +13,11 @@ export default function DraggableBadge({ photoUrl }) {
       width: '100%', 
       height: '100%', 
       position: 'relative',
-      minHeight: '500px',
       touchAction: 'none'
     }}>
       <Canvas 
         camera={{ position: [0, 0, 13], fov: 25 }} 
         style={{ pointerEvents: 'auto', touchAction: 'none' }}
-        eventPrefix="client"
       >
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
@@ -44,7 +42,7 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   
   const userTexture = useTexture(photoUrl)
-  userTexture.flipY = false // Ensure it's not upside down
+  userTexture.flipY = true // Standard orientation for R3F plane
 
   // Create custom band texture with "BARA KUSUMA"
   const bandTexture = useMemo(() => {
@@ -54,8 +52,8 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
     const ctx = canvas.getContext('2d')
     ctx.fillStyle = '#000000'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = '#FFFFFF'
-    ctx.font = 'bold 80px Outfit, sans-serif'
+    ctx.fillStyle = '#d4af37' // Gold color
+    ctx.font = 'bold 70px Outfit, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     const text = 'BARA KUSUMA • '
@@ -118,8 +116,8 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
 
   return (
     <>
-      {/* Anchor point moved higher for longer lanyard that touches the top */}
-      <group position={[0, 5.5, 0]}>
+      {/* High anchor point for full rope coverage */}
+      <group position={[0, 6.5, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -135,24 +133,31 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
           ref={card} 
           {...segmentProps} 
           type={dragged ? 'kinematicPosition' : 'dynamic'}
-          onPointerOver={() => hover(true)}
-          onPointerOut={() => hover(false)}
-          onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
-          onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}
         >
           <CuboidCollider args={[0.8, 1.125, 0.05]} />
           
-          {/* Custom Card Mesh for full photo and better design */}
-          <group position={[0, -1.1, 0]}>
+          <group 
+            position={[0, -1.1, 0]}
+            onPointerOver={() => hover(true)}
+            onPointerOut={() => hover(false)}
+            onPointerUp={(e) => {
+                e.target.releasePointerCapture(e.pointerId);
+                drag(false);
+            }}
+            onPointerDown={(e) => {
+                e.target.setPointerCapture(e.pointerId);
+                drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
+            }}
+          >
             {/* Card Base */}
             <RoundedBox args={[1.6, 2.25, 0.05]} radius={0.05} smoothness={4}>
               <meshStandardMaterial color="#0a0a0a" metalness={0.8} roughness={0.2} />
             </RoundedBox>
             
             {/* User Photo - Full Front */}
-            <mesh position={[0, 0, 0.03]}>
-              <planeGeometry args={[1.5, 2.15]} />
-              <meshBasicMaterial map={userTexture} />
+            <mesh position={[0, 0, 0.031]}>
+              <planeGeometry args={[1.52, 2.18]} />
+              <meshStandardMaterial map={userTexture} transparent metalness={0.1} roughness={0.5} />
             </mesh>
             
             {/* Top Clip Hole */}
