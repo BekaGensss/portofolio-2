@@ -117,9 +117,6 @@ const Hero = () => {
             </div>
 
             {/* === CONTENT === */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 5 }}>
-                <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
-            </div>
 
             <div style={{
                 position: 'relative', zIndex: 10,
@@ -238,9 +235,9 @@ const Hero = () => {
                             </motion.div>
                         </div>
 
-                        {/* RIGHT: Empty space for the 3D badge to hang */}
-                        <div style={{ flex: '1 1 400px', minWidth: 0, height: 'clamp(400px, 60vh, 600px)', pointerEvents: 'none' }}>
-                            {/* The 3D canvas is full-screen in the background, but visually the badge will hang here */}
+                        {/* RIGHT: 3D badge container */}
+                        <div style={{ flex: '1 1 400px', minWidth: 0, position: 'relative', height: 'clamp(500px, 70vh, 800px)', zIndex: 10 }}>
+                            <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
                         </div>
                     </div>
                 </motion.div>
