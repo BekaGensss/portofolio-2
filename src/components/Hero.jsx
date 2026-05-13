@@ -235,21 +235,86 @@ const Hero = () => {
                             </motion.div>
                         </div>
 
-                        {/* RIGHT: 3D badge container */}
-                        <div className="hero-badge-container" style={{ 
+                        {/* RIGHT: Modern Circular Profile Frame */}
+                        <div className="hero-profile-container" style={{ 
                             flex: '1 1 450px', 
                             minWidth: 0, 
                             position: 'relative', 
-                            height: 'clamp(550px, 75vh, 850px)', 
-                            zIndex: 10,
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            pointerEvents: 'none'
+                            zIndex: 10
                         }}>
-                            <div style={{ width: '100%', height: '100%', pointerEvents: 'auto', display: 'flex', justifyContent: 'center' }}>
-                                <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
-                            </div>
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                                style={{ position: 'relative' }}
+                            >
+                                {/* Glowing Background Orbs */}
+                                <div style={{
+                                    position: 'absolute',
+                                    inset: '-20px',
+                                    background: isDark 
+                                        ? 'radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%)' 
+                                        : 'radial-gradient(circle, rgba(184,134,11,0.1) 0%, transparent 70%)',
+                                    borderRadius: '50%',
+                                    filter: 'blur(20px)',
+                                    zIndex: -1
+                                }} />
+
+                                {/* Main Circular Frame */}
+                                <motion.div 
+                                    animate={{ y: [0, -15, 0] }}
+                                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                                    style={{
+                                        width: 'clamp(280px, 35vw, 420px)',
+                                        height: 'clamp(280px, 35vw, 420px)',
+                                        borderRadius: '50%',
+                                        padding: '12px',
+                                        background: isDark 
+                                            ? 'linear-gradient(135deg, #d4af37 0%, #1a1a1a 50%, #d4af37 100%)'
+                                            : 'linear-gradient(135deg, #b8860b 0%, #ffffff 50%, #b8860b 100%)',
+                                        boxShadow: isDark 
+                                            ? '0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(212,175,55,0.2)'
+                                            : '0 20px 50px rgba(0,0,0,0.1), inset 0 0 20px rgba(184,134,11,0.1)',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden'
+                                    }}
+                                >
+                                    <div style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: '50%',
+                                        overflow: 'hidden',
+                                        border: `4px solid ${isDark ? '#000' : '#fff'}`,
+                                        position: 'relative'
+                                    }}>
+                                        <img 
+                                            src={process.env.PUBLIC_URL + '/profile.jpg'} 
+                                            alt="Bara Kusuma"
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                                transform: 'scale(1.05)'
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* Overlay Gradient for depth */}
+                                    <div style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        borderRadius: '50%',
+                                        boxShadow: 'inset 0 0 50px rgba(0,0,0,0.2)',
+                                        pointerEvents: 'none'
+                                    }} />
+                                </motion.div>
+                            </motion.div>
                         </div>
                     </div>
                 </motion.div>
@@ -263,12 +328,8 @@ const Hero = () => {
                     opacity: 0.95;
                 }
 
-                .hero-badge-container {
-                    cursor: grab;
-                    touch-action: none;
-                }
-                .hero-badge-container:active {
-                    cursor: grabbing;
+                .hero-profile-container {
+                    padding: 40px 0;
                 }
 
                 /* Mobile: hero layout */
@@ -276,7 +337,7 @@ const Hero = () => {
                     .hero-flex-row {
                         flex-direction: column-reverse !important;
                         text-align: center;
-                        gap: 0px !important;
+                        gap: 40px !important;
                     }
                     .hero-flex-row > div:first-child {
                         flex: 1 1 auto !important;
@@ -284,13 +345,13 @@ const Hero = () => {
                         display: flex;
                         flex-direction: column;
                         align-items: center;
-                        padding-bottom: 40px;
+                        padding-bottom: 20px;
                     }
-                    .hero-badge-container {
+                    .hero-profile-container {
                         width: 100%;
-                        height: 480px !important;
                         margin-bottom: 0px;
-                        margin-top: -40px;
+                        margin-top: 0px;
+                        padding: 20px 0;
                     }
                     .hero-flex-row h1 {
                         font-size: clamp(2.5rem, 12vw, 4rem) !important;
@@ -299,10 +360,10 @@ const Hero = () => {
                 
                 @media(max-width:480px) {
                     #home {
-                        padding-top: 50px !important;
+                        padding-top: 40px !important;
                     }
-                    .hero-badge-container {
-                        height: 400px !important;
+                    .hero-profile-container {
+                        padding: 10px 0;
                     }
                 }
             `}</style>
