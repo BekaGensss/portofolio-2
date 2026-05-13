@@ -1,43 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTheme } from '../ThemeContext';
 
 const LangSwitch = ({ lang, toggleLang }) => {
+  const { isDark } = useTheme();
+
   return (
-    <StyledWrapper>
-      <label className="switch-food" title={lang === 'EN' ? 'Switch to Indonesian' : 'Switch to English'}>
+    <StyledWrapper isDark={isDark}>
+      <span className={`lang-label ${lang === 'ID' ? 'active' : ''}`}>ID</span>
+      
+      <div className="switch-wrapper" title={lang === 'EN' ? 'Switch to Indonesian' : 'Switch to English'}>
         <input 
           type="checkbox" 
-          className="switch-input" 
+          id="lang-switch-heart"
+          className="lang-input"
           checked={lang === 'EN'} 
           onChange={toggleLang} 
         />
-        <div className="switch-track">
-          <div className="switch-knob">
-            <div className="burger-container">
-              <div className="bun-top"><div className="seeds" /></div>
-              <div className="lettuce" />
-              <div className="patty" />
-              <div className="bun-bottom" />
-            </div>
-            <div className="fries-container">
-              <div className="fry-box">
-                <div className="fry f1" />
-                <div className="fry f2" />
-                <div className="fry f3" />
-                <div className="fry f4" />
-                <div className="fry f5" />
-                <div className="fry f6" />
-                <div className="fry f7" />
-                <div className="box-face front" />
-                <div className="box-face back" />
-                <div className="box-face right" />
-                <div className="box-face left" />
-                <div className="box-face bottom" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </label>
+        <label htmlFor="lang-switch-heart" className="love-heart">
+          <div className="bottom" />
+          <div className="round" />
+        </label>
+      </div>
+
+      <span className={`lang-label ${lang === 'EN' ? 'active' : ''}`}>EN</span>
     </StyledWrapper>
   );
 }
@@ -46,286 +32,124 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
+  gap: 8px; /* Jarak antara teks dan hati */
   height: 24px;
   
-  /* --- MAIN SWITCH CONTAINER --- */
-  .switch-food {
-    --w: 120px;
-    --h: 60px;
-    --knob-size: 50px;
-    --offset: 5px;
-    --bg-burger: #ffecd2;
-    --bg-fries: #fff5e6;
+  .lang-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: ${props => props.isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'};
+    transition: color 0.3s ease;
+  }
+  
+  .lang-label.active {
+    color: ${props => props.isDark ? '#d4af37' : '#b8860b'}; /* Warna emas kalau aktif */
+  }
 
+  .switch-wrapper {
     position: relative;
-    display: inline-block;
-    width: var(--w);
-    height: var(--h);
-    cursor: pointer;
-    
-    /* Scale the 120x60 component down to 48x24 */
-    transform: scale(0.4);
-    transform-origin: center;
-  }
-
-  .switch-input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-  }
-
-  /* The Background Track */
-  .switch-track {
-    position: absolute;
-    inset: 0;
-    background-color: var(--bg-burger);
-    border: 3px solid #333;
-    border-radius: 60px;
-    transition: background-color 0.4s;
-    overflow: hidden;
-  }
-
-  /* The Moving Knob Wrapper */
-  .switch-knob {
-    position: absolute;
-    top: var(--offset);
-    left: var(--offset);
-    width: var(--knob-size);
-    height: var(--knob-size);
-    transition: transform 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* ===========================
-     1. THE BURGER (2D DOODLE)
-     =========================== */
-  .burger-container {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition:
-      transform 0.4s ease,
-      opacity 0.3s ease;
-    z-index: 2;
-  }
-
-  .bun-top {
-    width: 36px;
-    height: 16px;
-    background: #ffa64d;
-    border: 2px solid #333;
-    border-bottom: none;
-    border-radius: 20px 20px 0 0;
-    position: relative;
-    z-index: 4;
-  }
-  .seeds {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: #333;
-    top: 6px;
-    left: 10px;
-    box-shadow:
-      12px 0 #333,
-      6px 4px #333;
-    border-radius: 50%;
-  }
-  .lettuce {
-    width: 40px;
-    height: 6px;
-    background: #8cd65e;
-    border: 2px solid #333;
-    border-radius: 10px;
-    margin-top: -2px;
-    z-index: 3;
-  }
-  .patty {
-    width: 36px;
-    height: 8px;
-    background: #8b4513;
-    border: 2px solid #333;
-    border-radius: 4px;
-    margin-top: -2px;
-    z-index: 2;
-  }
-  .bun-bottom {
-    width: 36px;
-    height: 10px;
-    background: #ffa64d;
-    border: 2px solid #333;
-    border-radius: 0 0 10px 10px;
-    margin-top: -2px;
-    z-index: 1;
-  }
-
-  /* ===========================
-     2. THE FRIES (3D)
-     =========================== */
-  .fries-container {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    perspective: 600px;
-    opacity: 0;
-    transform: scale(0);
-    transition:
-      transform 0.4s ease,
-      opacity 0.3s ease;
-    z-index: 1;
-  }
-
-  .fry-box {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transform: rotateX(-20deg) rotateY(30deg);
-  }
-
-  /* The Red Box Faces */
-  .box-face {
-    position: absolute;
-    border: 2px solid #333;
-    background: #ff4757;
-    backface-visibility: visible;
-  }
-  .box-face.front {
-    width: 30px;
-    height: 35px;
-    transform: translateZ(15px);
-    left: 5px;
-    top: 5px;
-  }
-  .box-face.back {
-    width: 30px;
-    height: 35px;
-    transform: rotateY(180deg) translateZ(15px);
-    left: 5px;
-    top: 5px;
-  }
-  .box-face.right {
-    width: 30px;
-    height: 35px;
-    transform: rotateY(90deg) translateZ(15px);
-    left: 5px;
-    top: 5px;
-  }
-  .box-face.left {
-    width: 30px;
-    height: 35px;
-    transform: rotateY(-90deg) translateZ(15px);
-    left: 5px;
-    top: 5px;
-  }
-  .box-face.bottom {
-    width: 30px;
-    height: 30px;
-    transform: rotateX(-90deg) translateZ(30px);
-    left: 5px;
-  }
-
-  /* The Yellow Fries sticking out */
-  .fry {
-    position: absolute;
-    width: 6px;
-    height: 25px;
-    background: #ffd32a;
-    border: 2px solid #333;
-    top: -10px;
-    transform-origin: bottom;
-    border-radius: 2px;
-  }
-
-  /* Positioning all the fries (Scatter them in 3D) */
-  /* Front Left */
-  .fry.f1 {
-    left: 8px;
-    transform: translateZ(10px) rotateZ(-10deg);
-  }
-  /* Center Tall */
-  .fry.f2 {
-    left: 16px;
-    transform: translateZ(5px) rotateZ(0deg);
-    height: 32px;
-    top: -17px;
-  }
-  /* Back Center */
-  .fry.f3 {
-    left: 12px;
-    transform: translateZ(-5px) rotateZ(8deg);
-  }
-  /* Front Right */
-  .fry.f4 {
-    left: 22px;
-    transform: translateZ(10px) rotateZ(10deg);
-    height: 20px;
-  }
-  /* Back Left */
-  .fry.f5 {
-    left: 8px;
-    transform: translateZ(-8px) rotateZ(-15deg);
-    height: 28px;
-    top: -12px;
-  }
-  /* Middle Right */
-  .fry.f6 {
-    left: 24px;
-    transform: translateZ(0px) rotateZ(5deg);
+    width: 24px;
     height: 24px;
-  }
-  /* Middle Center */
-  .fry.f7 {
-    left: 14px;
-    transform: translateZ(12px) rotateZ(-5deg);
-    height: 26px;
-    top: -8px;
-  }
-
-  /* ===========================
-     ANIMATIONS
-     =========================== */
-
-  .switch-input:checked ~ .switch-track .switch-knob {
-    transform: translateX(
-      calc(var(--w) - var(--knob-size) - (var(--offset) * 2))
-    );
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* Sedikit di-tweak agar posisinya pas di tengah */
+    padding-top: 4px;
+    padding-right: 2px;
   }
 
-  .switch-input:checked ~ .switch-track .burger-container {
-    opacity: 0;
-    transform: scale(0) rotate(-90deg);
+  /* From Uiverse.io by barisdogansutcu */ 
+  .love-heart:before, .lang-input {
+    display: none;
   }
 
-  .switch-input:checked ~ .switch-track .fries-container {
-    opacity: 1;
-    transform: scale(1);
+  .love-heart, .love-heart::after {
+    border-color: ${props => props.isDark ? 'hsl(231deg 15% 40%)' : 'hsl(231deg 28% 70%)'};
+    border: 1px solid;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    width: 10px;
+    height: 8px;
+    border-bottom: 0;
+    transition: border-color 0.4s;
   }
 
-  .switch-input:checked ~ .switch-track .fry-box {
-    animation: spinFries 3s infinite linear;
+  .round {
+    position: absolute;
+    z-index: 1;
+    width: 8px;
+    height: 8px;
+    background: ${props => props.isDark ? 'hsl(0deg 0% 80%)' : 'hsl(0deg 0% 100%)'};
+    box-shadow: rgb(0 0 0 / 24%) 0px 0px 4px 0px;
+    border-radius: 100%;
+    left: 0px;
+    bottom: -1px;
+    transition: all .5s ease;
+    animation: check-animation2 .5s forwards;
   }
 
-  .switch-input:checked ~ .switch-track {
-    background-color: var(--bg-fries);
+  .lang-input:checked + .love-heart .round {
+    transform: translate(0px, 0px);
+    animation: check-animation .5s forwards;
+    background-color: hsl(0deg 0% 100%);
   }
 
-  @keyframes spinFries {
-    0% {
-      transform: rotateX(-20deg) rotateY(0deg);
-    }
-    100% {
-      transform: rotateX(-20deg) rotateY(360deg);
-    }
+  @keyframes check-animation {
+    0% { transform: translate(0px, 0px); }
+    50% { transform: translate(0px, 7px); }
+    100% { transform: translate(7px, 7px); }
+  }
+
+  @keyframes check-animation2 {
+    0% { transform: translate(7px, 7px); }
+    50% { transform: translate(0px, 7px); }
+    100% { transform: translate(0px, 0px); }
+  }
+
+  .love-heart {
+    box-sizing: border-box;
+    position: relative;
+    /* Disesuaikan skala dan transformasinya agar muat di navbar */
+    transform: rotate(-45deg) scale(1.6);
+    display: block;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .lang-input:checked + .love-heart, 
+  .lang-input:checked + .love-heart::after, 
+  .lang-input:checked + .love-heart .bottom {
+    /* Merah Hati ketika EN (Checked) */
+    border-color: hsl(347deg 81% 61%);
+    box-shadow: inset 6px -5px 0px 2px hsl(347deg 99% 72%);
+  }
+
+  .love-heart::after, .love-heart .bottom {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    border-color: ${props => props.isDark ? 'hsl(231deg 15% 40%)' : 'hsl(231deg 28% 70%)'};
+    transition: border-color 0.4s;
+  }
+
+  .love-heart::after {
+    right: -9px;
+    transform: rotate(90deg);
+    top: 7px;
+  }
+
+  .love-heart .bottom {
+    width: 11px;
+    height: 11px;
+    border-left: 1px solid;
+    border-bottom: 1px solid;
+    left: -1px;
+    top: 5px;
+    border-radius: 0px 0px 0px 5px;
   }
 `;
 
