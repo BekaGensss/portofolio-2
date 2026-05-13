@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSun, FiMoon, FiHome, FiUser, FiBriefcase, FiGithub, FiAward, FiMail, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiUser, FiBriefcase, FiGithub, FiAward, FiMail, FiMenu, FiX } from 'react-icons/fi';
 import { useTheme } from '../ThemeContext';
+import ThemeSwitch from './ThemeSwitch';
+import LangSwitch from './LangSwitch';
 
 const getLinks = (lang) => [
     { href: '#home',         icon: FiHome,      label: lang === 'ID' ? 'Beranda' : 'Home'         },
@@ -132,43 +134,36 @@ const Navbar = () => {
                     display: 'flex', gap: 8,
                 }}
             >
-                <button
-                    onClick={toggleLang}
-                    aria-label="Toggle language"
+                <div
+                    title={lang === 'EN' ? 'Language: English' : 'Language: Indonesian'}
                     style={{
-                        width: 40, height: 40, borderRadius: 100,
+                        height: 40, borderRadius: 100,
                         background: isDark ? 'rgba(14,14,14,0.92)' : 'rgba(240,240,235,0.92)',
                         backdropFilter: 'blur(32px)',
                         border: `1px solid ${theme.border}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: theme.textPrimary, cursor: 'pointer',
-                        fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 13,
+                        padding: '0 12px',
                         boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.6)' : '0 4px 20px rgba(0,0,0,0.1)',
                         transition: 'all 0.2s',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = 'rgba(212, 175, 55,0.35)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = theme.textPrimary; e.currentTarget.style.borderColor = theme.border; }}
                 >
-                    {lang}
-                </button>
-                <button
-                    onClick={toggleTheme}
-                    aria-label="Toggle theme"
+                    <LangSwitch lang={lang} toggleLang={toggleLang} />
+                </div>
+                <div
+                    title={isDark ? 'Theme: Dark' : 'Theme: Light'}
                     style={{
-                        width: 40, height: 40, borderRadius: 100,
+                        height: 40, borderRadius: 100,
                         background: isDark ? 'rgba(14,14,14,0.92)' : 'rgba(240,240,235,0.92)',
                         backdropFilter: 'blur(32px)',
                         border: `1px solid ${theme.border}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: theme.textMuted, cursor: 'pointer',
+                        padding: '0 12px',
                         boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.6)' : '0 4px 20px rgba(0,0,0,0.1)',
                         transition: 'all 0.2s',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.borderColor = 'rgba(212, 175, 55,0.35)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = theme.textMuted; e.currentTarget.style.borderColor = theme.border; }}
                 >
-                    {isDark ? <FiSun size={15} /> : <FiMoon size={15} />}
-                </button>
+                    <ThemeSwitch isDark={isDark} toggleTheme={toggleTheme} />
+                </div>
             </motion.div>
 
             {/* ─────────────── MOBILE: Top bar ─────────────── */}
@@ -192,24 +187,9 @@ const Navbar = () => {
                     }}>BARA</span>
                 </div>
 
-                <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={toggleLang} aria-label="Toggle language" style={{
-                        width: 34, height: 34, borderRadius: 9,
-                        background: 'transparent', border: `1px solid ${theme.border}`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: theme.textPrimary, cursor: 'pointer',
-                        fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 12,
-                    }}>
-                        {lang}
-                    </button>
-                    <button onClick={toggleTheme} aria-label="Toggle theme" style={{
-                        width: 34, height: 34, borderRadius: 9,
-                        background: 'transparent', border: `1px solid ${theme.border}`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: theme.textMuted, cursor: 'pointer',
-                    }}>
-                        {isDark ? <FiSun size={13} /> : <FiMoon size={13} />}
-                    </button>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <LangSwitch lang={lang} toggleLang={toggleLang} />
+                    <ThemeSwitch isDark={isDark} toggleTheme={toggleTheme} />
                     <button onClick={() => setOpen(o => !o)} aria-label="Menu" style={{
                         width: 34, height: 34, borderRadius: 9,
                         background: open ? '#d4af37' : 'transparent',

@@ -1,465 +1,243 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Loader = () => {
+const Loader = ({ theme }) => {
   return (
-    <StyledWrapper>
-      <div className="view">
-        <div className="lamp lamp-left">
-          <div className="head">
-            <div className="head-top" />
-            <div className="light-source" />
-            <div className="head-body">
-              <div className="head-body-rod" />
-              <div className="head-body-glass" />
-              <div className="head-body-rod" />
-              <div className="head-body-glass" />
-              <div className="head-body-rod" />
-              <div className="head-bottom" />
+    <StyledWrapper theme={theme}>
+      <div className="capybaraloader">
+        <div className="capybara">
+          <div className="capyhead">
+            <div className="capyear">
+              <div className="capyear2" />
             </div>
+            <div className="capyear" />
+            <div className="capymouth">
+              <div className="capylips" />
+              <div className="capylips" />
+            </div>
+            <div className="capyeye" />
+            <div className="capyeye" />
           </div>
-          <div className="rod" />
-          <div className="bottom">
-            <div className="bottom-top" />
-            <div className="bottom-body" />
-            <div className="bottom-bottom" />
-          </div>
-          <div className="lamp-shadow" />
+          <div className="capyleg" />
+          <div className="capyleg2" />
+          <div className="capyleg2" />
+          <div className="capy" />
         </div>
-        <div className="lamp lamp-right">
-          <div className="head">
-            <div className="head-top" />
-            <div className="light-source" />
-            <div className="head-body">
-              <div className="head-body-rod" />
-              <div className="head-body-glass" />
-              <div className="head-body-rod" />
-              <div className="head-body-glass" />
-              <div className="head-body-rod" />
-              <div className="head-bottom" />
-            </div>
-          </div>
-          <div className="rod" />
-          <div className="bottom">
-            <div className="bottom-top" />
-            <div className="bottom-body" />
-            <div className="bottom-bottom" />
-          </div>
-          <div className="lamp-shadow" />
+        <div className="loader">
+          <div className="loaderline" />
         </div>
-        <div className="masonry-perspective">
-          <div className="masonry-container">
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-            <div className="masonry">
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-              <div className="masonry-item" />
-            </div>
-          </div>
-        </div>
-        <div className="sky">
-          <div className="star star-1" />
-          <div className="star star-2" />
-          <div className="star star-3" />
-          <div className="star star-4" />
-          <div className="star star-5" />
-          <div className="star star-6" />
-          <div className="star star-7" />
-          <div className="star star-8" />
-          <div className="star star-9" />
-        </div>
-        <div className="ground" />
       </div>
     </StyledWrapper>
   );
 }
 
 const StyledWrapper = styled.div`
-  .view {
-    position: relative; /* Changed from absolute so it flows naturally in flex container */
-    width: 300px;
-    height: 300px;
-    border: 5px solid ${props => props.theme === 'light' ? '#ccc' : 'black'};
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #0b1026;
-    box-shadow: ${props => props.theme === 'light' ? '0 10px 30px rgba(0,0,0,0.1)' : '0 10px 30px rgba(0,0,0,0.5)'};
-  }
-  .lamp {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 400px;
-    opacity: 0;
-    z-index: 300;
-  }
-  .lamp-left {
-    animation: lamp-pass-left 2s ease-in 1s infinite;
-  }
-  .lamp-right {
-    animation: lamp-pass-right 2s ease-in 2s infinite;
-  }
-  .head {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  .capybaraloader {
+    /* Responsive font-size agar unit 'em' menyesuaikan secara dinamis di layar HP maupun Desktop */
+    font-size: clamp(12px, 4vw, 20px);
+    width: 14em;
+    height: 10em;
     position: relative;
+    z-index: 1;
+    --color: rgb(204, 125, 45);
+    --color2: rgb(83, 56, 28);
+    transform: scale(1);
+    transition: all 0.3s ease;
   }
-  .light-source {
+
+  .capybara {
+    width: 100%;
+    height: 7.5em;
+    position: relative;
+    z-index: 1;
+  }
+  .loader {
+    width: 100%;
+    height: 2.5em;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .capy {
+    width: 85%;
+    height: 100%;
+    background: linear-gradient(var(--color), 90%, var(--color2));
+    border-radius: 45%;
+    position: relative;
+    z-index: 1;
+    animation: movebody 1s linear infinite;
+  }
+  .capyhead {
+    width: 7.5em;
+    height: 7em;
+    bottom: 0em;
+    right: 0em;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0px 0px 200px 50px #dfd89c;
+    background-color: var(--color);
+    z-index: 3;
+    border-radius: 3.5em;
+    box-shadow: -1em 0em var(--color2);
+    animation: movebody 1s linear infinite;
+  }
+  .capyear {
+    width: 2em;
+    height: 2em;
+    background: linear-gradient(-45deg, var(--color), 90%, var(--color2));
+    top: 0em;
+    left: 0em;
+    border-radius: 100%;
+    position: absolute;
+    overflow: hidden;
     z-index: 3;
   }
-  .head-top {
-    height: 15px;
-    width: 10px;
-    background-color: #000;
-    border-top-left-radius: 100%;
-    border-top-right-radius: 100%;
+  .capyear:nth-child(2) {
+    left: 5em;
+    background: linear-gradient(25deg, var(--color), 90%, var(--color2));
   }
-  .head-body {
-    height: 80px;
-    width: 70px;
-    clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%);
-    border-top-left-radius: 20%;
-    border-top-right-radius: 20%;
-    border-top: 15px solid black;
-    border-bottom: 15px solid black;
-    overflow: hidden;
+  .capyear2 {
+    width: 100%;
+    height: 1em;
+    background-color: var(--color2);
+    bottom: 0em;
+    left: 0.5em;
+    border-radius: 100%;
+    position: absolute;
+    transform: rotate(-45deg);
+  }
+  .capymouth {
+    width: 3.5em;
+    height: 2em;
+    background-color: var(--color2);
+    position: absolute;
+    bottom: 0em;
+    left: 2.5em;
+    border-radius: 50%;
     display: flex;
-    background-color: #dfd89c;
-    flex-direction: row;
-    align-items: stretch;
-  }
-  .head-body-rod {
-    width: 8px;
-    background-color: black;
-  }
-  .head-body-rod:nth-child(1) {
-    transform: skewX(7deg);
-    width: 15px;
-  }
-  .head-body-rod:nth-child(5) {
-    transform: skewX(-7deg);
-    width: 15px;
-  }
-  .head-body-glass {
-    flex: 1;
-  }
-
-  .rod {
-    flex: 1;
-    background-color: black;
-    width: 16px;
-  }
-  .bottom {
-    display: flex;
-    flex-direction: column;
+    justify-content: space-around;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 80px;
-    border-top-left-radius: 30%;
-    border-top-right-radius: 30%;
-    border-bottom-left-radius: 20%;
-    border-bottom-right-radius: 20%;
-    box-shadow: inset 0px 2px 3px #5d5f3f;
-    background: linear-gradient(0deg, #000 50%, #373829);
+    padding: 0.5em;
   }
-  .bottom-top {
-    margin-top: 20px;
-    width: 50px;
-    height: 10px;
-    box-shadow: inset 0px 2px 3px #5d5f3f;
-    background: linear-gradient(0deg, #000 70%, #5d5f3f);
-    border-radius: 30%;
+  .capylips {
+    width: 0.25em;
+    height: 0.75em;
+    border-radius: 100%;
+    transform: rotate(-45deg);
+    background-color: var(--color);
   }
-  .bottom-body {
-    flex: 1;
+  .capylips:nth-child(2) {
+    transform: rotate(45deg);
   }
-  .bottom-bottom {
-    width: 50px;
-    height: 30px;
-    background: linear-gradient(0deg, #000 50%, #373829);
-    border-top-left-radius: 100%;
-    border-top-right-radius: 100%;
-  }
-  .lamp-shadow {
+  .capyeye {
+    width: 2em;
+    height: 0.5em;
+    background-color: var(--color2);
     position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 16px;
-    border-top-left-radius: 100%;
-    border-top-right-radius: 100%;
-    border-bottom-left-radius: 90%;
-    border-bottom-right-radius: 90%;
-    background: radial-gradient(circle, #000 0%, transparent 100%);
+    bottom: 3.5em;
+    left: 1.5em;
+    border-radius: 5em;
+    transform: rotate(45deg);
   }
-  .masonry-perspective {
-    perspective: 150px;
-    width: 90px;
-    height: 150px;
+  .capyeye:nth-child(4) {
+    transform: rotate(-45deg);
+    left: 5.5em;
+    width: 1.75em;
+  }
+  .capyleg {
+    width: 6em;
+    height: 5em;
+    bottom: 0em;
+    left: 0em;
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    margin-bottom: -60px;
-    transform: translateX(-50%);
+    background: linear-gradient(var(--color), 95%, var(--color2));
+    z-index: 2;
+    border-radius: 2em;
+    animation: movebody 1s linear infinite;
   }
-  .masonry-container {
-    transform: rotateX(50deg) !important;
-    transform-style: preserve-3d;
-    width: 100%;
-  }
-  .masonry {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15px, 1fr));
-    gap: 1px;
-    width: 100%;
-    height: 10px;
+  .capyleg2 {
+    width: 1.75em;
+    height: 3em;
+    bottom: 0em;
+    left: 3.25em;
     position: absolute;
-    padding-bottom: 15px;
-    opacity: 0;
+    background: linear-gradient(var(--color), 80%, var(--color2));
+    z-index: 2;
+    border-radius: 0.75em;
+    box-shadow: inset 0em -0.5em var(--color2);
+    animation: moveleg 1s linear infinite;
   }
-  .masonry:nth-child(1) {
-    animation: walk 2s linear infinite;
-  }
-  .masonry:nth-child(2) {
-    animation: walk 2s linear 0.2s infinite;
-  }
-  .masonry:nth-child(3) {
-    animation: walk 2s linear 0.4s infinite;
-  }
-  .masonry:nth-child(4) {
-    animation: walk 2s linear 0.6s infinite;
-  }
-  .masonry:nth-child(5) {
-    animation: walk 2s linear 0.8s infinite;
-  }
-  .masonry:nth-child(6) {
-    animation: walk 2s linear 1s infinite;
-  }
-  .masonry:nth-child(7) {
-    animation: walk 2s linear 1.2s infinite;
-  }
-  .masonry:nth-child(8) {
-    animation: walk 2s linear 1.4s infinite;
-  }
-  .masonry:nth-child(9) {
-    animation: walk 2s linear 1.6s infinite;
-  }
-  .masonry:nth-child(10) {
-    animation: walk 2s linear 1.8s infinite;
-  }
-  .masonry-item {
-    border-radius: 3px;
-    padding: 1px;
-    box-shadow:
-      inset 1px 1px 3px #5d5f3f,
-      inset -1px -1px 6px #222;
-    font-size: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #444;
+  .capyleg2:nth-child(3) {
+    width: 1.25em;
+    left: 0.5em;
+    height: 2em;
+    animation: moveleg2 1s linear infinite 0.075s;
   }
 
-  /* Farklı boyutlarda öğeler eklemek için */
-  .masonry:nth-child(even) .masonry-item:nth-child(odd) {
-    height: 20px;
-  }
-  .masonry:nth-child(odd) .masonry-item:nth-child(even) {
-    height: 24px;
-  }
-  .masonry:nth-child(odd) .masonry-item:nth-child(odd) {
-    height: 24px;
-  }
-  .masonry:nth-child(odd) .masonry-item:nth-child(even) {
-    height: 20px;
-  }
-  .sky {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: -2;
-    background-color: #0d0b1f;
-  }
-  .star {
-    width: 1px;
-    height: 1px;
-    background-color: #fff;
-    box-shadow: 0px 0px 10px 1px #ffdd48;
-    position: absolute;
-  }
-  .star-1 {
-    left: 50%;
-    top: 20%;
-  }
-  .star-2 {
-    left: 40%;
-    top: 30%;
-  }
-  .star-3 {
-    left: 16%;
-    top: 23%;
-  }
-  .star-4 {
-    left: 56%;
-    top: 44%;
-  }
-  .star-5 {
-    left: 72%;
-    top: 10%;
-  }
-  .star-6 {
-    left: 42%;
-    top: 8%;
-  }
-  .star-7 {
-    left: 18%;
-    top: 40%;
-  }
-  .star-8 {
-    left: 80%;
-    top: 50%;
-  }
-  .star-9 {
-    left: 90%;
-    top: 30%;
-  }
-  .ground {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: rgb(10, 31, 10);
-    height: 38%;
-    z-index: -1;
-  }
-
-  @keyframes walk {
+  @keyframes moveleg {
     0% {
-      opacity: 0;
-      transform: translateY(-900%);
-    }
-    20% {
-      opacity: 0;
+      transform: rotate(-45deg) translateX(-5%);
     }
     50% {
-      opacity: 1;
-      transform: translateY(0%);
-    }
-    80% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
+      transform: rotate(45deg) translateX(5%);
     }
     100% {
-      opacity: 0;
-      transform: translateY(900%);
+      transform: rotate(-45deg) translateX(-5%);
     }
   }
-  @keyframes lamp-pass-right {
+
+  @keyframes moveleg2 {
     0% {
-      opacity: 0;
-      transform: translateX(-10%) translateY(-50%) scale(0.2);
+      transform: rotate(45deg);
     }
-    20% {
-      opacity: 1;
+    50% {
+      transform: rotate(-45deg);
     }
     100% {
-      opacity: 1;
-      transform: translateX(250%) translateY(-40%) scale(1.2);
+      transform: rotate(45deg);
     }
   }
-  @keyframes lamp-pass-left {
+
+  @keyframes movebody {
     0% {
-      opacity: 0;
-      transform: translateX(-90%) translateY(-50%) scale(0.2);
+      transform: translateX(0%);
     }
-    20% {
-      opacity: 1;
+    50% {
+      transform: translateX(2%);
     }
     100% {
-      opacity: 1;
-      transform: translateX(-350%) translateY(-40%) scale(1.2);
+      transform: translateX(0%);
     }
-  }`;
+  }
+
+  .loaderline {
+    width: 50em;
+    height: 0.5em;
+    /* Ganti warna dashed line mengikuti tema agar terlihat jelas di Light & Dark mode */
+    border-top: 0.5em dashed ${props => props.theme === 'light' ? '#333' : 'var(--color2)'};
+    animation: moveline 10s linear infinite;
+  }
+
+  @keyframes moveline {
+    0% {
+      transform: translateX(0%);
+      opacity: 0%;
+    }
+    5% {
+      opacity: 100%;
+    }
+    95% {
+      opacity: 100%;
+    }
+    100% {
+      opacity: 0%;
+      transform: translateX(-70%);
+    }
+  }
+`;
 
 export default Loader;
