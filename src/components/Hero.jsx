@@ -262,6 +262,7 @@ const Hero = () => {
 
                 .hero-badge-container {
                     cursor: grab;
+                    touch-action: none;
                 }
                 .hero-badge-container:active {
                     cursor: grabbing;
@@ -272,7 +273,7 @@ const Hero = () => {
                     .hero-flex-row {
                         flex-direction: column-reverse !important;
                         text-align: center;
-                        gap: 0px !important;
+                        gap: 20px !important;
                     }
                     .hero-flex-row > div:first-child {
                         flex: 1 1 auto !important;
@@ -283,15 +284,12 @@ const Hero = () => {
                     }
                     .hero-badge-container {
                         width: 100%;
-                        height: 450px !important;
-                        margin-bottom: -30px;
-                        margin-top: -50px;
+                        height: 480px !important;
+                        margin-bottom: 0px;
+                        margin-top: -20px;
                     }
                     .hero-flex-row h1 {
                         font-size: clamp(3rem, 12vw, 5rem) !important;
-                    }
-                    .hero-flex-row p {
-                        margin-bottom: 4px !important;
                     }
                 }
                 
@@ -300,10 +298,7 @@ const Hero = () => {
                         padding-top: 80px !important;
                     }
                     .hero-badge-container {
-                        height: 380px !important;
-                    }
-                    .hero-flex-row h1 {
-                        font-size: clamp(2.5rem, 15vw, 4rem) !important;
+                        height: 400px !important;
                     }
                 }
             `}</style>

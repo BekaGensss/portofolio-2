@@ -1,11 +1,14 @@
 import * as THREE from 'three'
 import { useEffect, useRef, useState, Suspense, useMemo } from 'react'
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
-import { useTexture, Environment, Lightformer, RoundedBox } from '@react-three/drei'
+import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
 extend({ MeshLineGeometry, MeshLineMaterial })
+
+// Preload assets for speed
+useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
 
 export default function DraggableBadge({ photoUrl }) {
   return (
@@ -13,18 +16,20 @@ export default function DraggableBadge({ photoUrl }) {
       width: '100%', 
       height: '100%', 
       position: 'relative',
-      touchAction: 'none'
+      touchAction: 'none',
+      overflow: 'hidden'
     }}>
       <Canvas 
         camera={{ position: [0, 0, 13], fov: 25 }} 
         style={{ pointerEvents: 'auto', touchAction: 'none' }}
+        gl={{ antialias: true, alpha: true }}
       >
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={null}>
           <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
             <Band photoUrl={photoUrl} />
           </Physics>
-          <Environment background={false} blur={0.75}>
+          <Environment background={false}>
             <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
             <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
             <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
@@ -41,10 +46,10 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3() // prettier-ignore
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   
+  const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
   const userTexture = useTexture(photoUrl)
-  userTexture.flipY = true // Standard orientation for R3F plane
-
-  // Create custom band texture with "BARA KUSUMA"
+  
+  // Custom band texture with user name
   const bandTexture = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = 1024
@@ -52,7 +57,7 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
     const ctx = canvas.getContext('2d')
     ctx.fillStyle = '#000000'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = '#d4af37' // Gold color
+    ctx.fillStyle = '#d4af37'
     ctx.font = 'bold 70px Outfit, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -63,7 +68,6 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
     }
     const texture = new THREE.CanvasTexture(canvas)
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-    texture.repeat.set(1, 1)
     return texture
   }, [])
   
@@ -116,8 +120,7 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
 
   return (
     <>
-      {/* High anchor point for full rope coverage */}
-      <group position={[0, 6.5, 0]}>
+      <group position={[0, 6, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -134,41 +137,37 @@ function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
           {...segmentProps} 
           type={dragged ? 'kinematicPosition' : 'dynamic'}
         >
-          <CuboidCollider args={[0.8, 1.125, 0.05]} />
-          
-          <group 
-            position={[0, -1.1, 0]}
+          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <group
+            scale={2.25}
+            position={[0, -1.2, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
-            onPointerUp={(e) => {
-                e.target.releasePointerCapture(e.pointerId);
-                drag(false);
-            }}
-            onPointerDown={(e) => {
-                e.target.setPointerCapture(e.pointerId);
-                drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
-            }}
+            onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
+            onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}
           >
-            {/* Card Base */}
-            <RoundedBox args={[1.6, 2.25, 0.05]} radius={0.05} smoothness={4}>
-              <meshStandardMaterial color="#0a0a0a" metalness={0.8} roughness={0.2} />
-            </RoundedBox>
-            
-            {/* User Photo - Full Front */}
-            <mesh position={[0, 0, 0.031]}>
-              <planeGeometry args={[1.52, 2.18]} />
-              <meshStandardMaterial map={userTexture} transparent metalness={0.1} roughness={0.5} />
+            {/* The Vercel Card Mesh */}
+            <mesh geometry={nodes.card.geometry}>
+              <meshPhysicalMaterial 
+                color="#0a0a0a" 
+                clearcoat={1} 
+                clearcoatRoughness={0.15} 
+                roughness={0.3} 
+                metalness={0.8} 
+              />
             </mesh>
             
-            {/* Top Clip Hole */}
-            <mesh position={[0, 1.125 - 0.1, 0]}>
-              <cylinderGeometry args={[0.08, 0.08, 0.1, 16]} rotation={[Math.PI / 2, 0, 0]} />
-              <meshStandardMaterial color="#333" metalness={1} roughness={0.1} />
+            {/* The User Photo - Overlay on the card */}
+            <mesh position={[0, 0, 0.01]} rotation={[0, 0, 0]}>
+              <planeGeometry args={[0.7, 1]} />
+              <meshBasicMaterial map={userTexture} transparent={true} />
             </mesh>
+
+            <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
+            <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
           </group>
         </RigidBody>
       </group>
-      
       <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial 
