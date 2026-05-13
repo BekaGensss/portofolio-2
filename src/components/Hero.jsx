@@ -236,7 +236,16 @@ const Hero = () => {
                         </div>
 
                         {/* RIGHT: 3D badge container */}
-                        <div style={{ flex: '1 1 400px', minWidth: 0, position: 'relative', height: 'clamp(500px, 70vh, 800px)', zIndex: 10 }}>
+                        <div className="hero-badge-container" style={{ 
+                            flex: '1 1 450px', 
+                            minWidth: 0, 
+                            position: 'relative', 
+                            height: 'clamp(550px, 75vh, 850px)', 
+                            zIndex: 10,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
                             <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
                         </div>
                     </div>
@@ -247,46 +256,54 @@ const Hero = () => {
                 @keyframes tickR { 0% {transform:translate3d(0,0,0)} 100% {transform:translate3d(-33.33%,0,0)} }
                 @keyframes tickL { 0% {transform:translate3d(-33.33%,0,0)} 100% {transform:translate3d(0,0,0)} }
                 
-                /* Photo always visible */
-                .hero-photo-wrap { display:flex !important; }
-
                 #home .hero-band {
                     opacity: 0.95;
                 }
 
+                .hero-badge-container {
+                    cursor: grab;
+                }
+                .hero-badge-container:active {
+                    cursor: grabbing;
+                }
+
                 /* Mobile: hero layout */
-                @media(max-width:900px) {
+                @media(max-width:968px) {
                     .hero-flex-row {
                         flex-direction: column-reverse !important;
-                        text-align: left;
-                        gap: 50px !important;
+                        text-align: center;
+                        gap: 0px !important;
                     }
                     .hero-flex-row > div:first-child {
-                        flex: 1 1 100% !important;
+                        flex: 1 1 auto !important;
+                        width: 100%;
                         display: flex;
                         flex-direction: column;
-                        align-items: flex-start;
+                        align-items: center;
                     }
-                    .hero-photo-wrap { margin-bottom: 0px; }
-                    .hero-badge {
-                        right: 50% !important;
-                        bottom: -15px !important;
-                        transform: translateX(50%) !important;
+                    .hero-badge-container {
+                        width: 100%;
+                        height: 450px !important;
+                        margin-bottom: -30px;
+                        margin-top: -50px;
+                    }
+                    .hero-flex-row h1 {
+                        font-size: clamp(3rem, 12vw, 5rem) !important;
+                    }
+                    .hero-flex-row p {
+                        margin-bottom: 4px !important;
                     }
                 }
                 
-                @media(max-width:767px) {
+                @media(max-width:480px) {
                     #home {
-                        padding-top: 100px !important;
-                        min-height: 100svh;
+                        padding-top: 80px !important;
                     }
-                    /* Make bands visible on mobile */
-                    #home .hero-band {
-                        opacity: 0.9 !important;
+                    .hero-badge-container {
+                        height: 380px !important;
                     }
-                    .hero-photo-wrap > div > div {
-                        width: clamp(160px, 50vw, 220px) !important;
-                        height: clamp(160px, 50vw, 220px) !important;
+                    .hero-flex-row h1 {
+                        font-size: clamp(2.5rem, 15vw, 4rem) !important;
                     }
                 }
             `}</style>

@@ -1,178 +1,148 @@
-import * as THREE from 'three';
-import { useRef, useState, Suspense } from 'react';
-import { Canvas, extend, useThree, useFrame } from '@react-three/fiber';
-import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
-import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
-import { useTexture, Environment, RoundedBox, Text } from '@react-three/drei';
+import * as THREE from 'three'
+import { useEffect, useRef, useState, Suspense } from 'react'
+import { Canvas, extend, useThree, useFrame } from '@react-three/fiber'
+import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei'
+import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier'
+import { MeshLineGeometry, MeshLineMaterial } from 'meshline'
 
-extend({ MeshLineGeometry, MeshLineMaterial });
+extend({ MeshLineGeometry, MeshLineMaterial })
 
-function Band({ textureUrl }) {
-  const band1 = useRef(), band2 = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
-  const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
-  const { width, height } = useThree((state) => state.size);
-  const [curve1] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
-  const [curve2] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
-  const [dragged, drag] = useState(false);
+// Preload Vercel assets
+useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
+useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
+
+export default function DraggableBadge({ photoUrl }) {
+  return (
+    <div style={{ 
+      width: '100%', 
+      height: '100%', 
+      position: 'relative',
+      minHeight: '500px'
+    }}>
+      <Canvas camera={{ position: [0, 0, 13], fov: 25 }} style={{ pointerEvents: 'auto' }}>
+        <ambientLight intensity={Math.PI} />
+        <Suspense fallback={null}>
+          <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
+            <Band photoUrl={photoUrl} />
+          </Physics>
+          <Environment background={false} blur={0.75}>
+            <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+            <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+            <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+            <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
+          </Environment>
+        </Suspense>
+      </Canvas>
+    </div>
+  )
+}
+
+function Band({ photoUrl, maxSpeed = 50, minSpeed = 10 }) {
+  const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef() // prettier-ignore
+  const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3() // prettier-ignore
+  const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 }
   
-  const texture = useTexture(textureUrl);
-  texture.colorSpace = THREE.SRGBColorSpace;
+  const { nodes, materials } = useGLTF('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb')
+  const bandTexture = useTexture('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg')
+  const userTexture = useTexture(photoUrl)
+  
+  const { width, height } = useThree((state) => state.size)
+  const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]))
+  const [dragged, drag] = useState(false)
+  const [hovered, hover] = useState(false)
 
-  // Lanyard joints
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
-  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.45, 0]]);
+  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
+  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
+  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]) // prettier-ignore
+  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.45, 0]]) // prettier-ignore
 
-  useFrame((state) => {
+  useEffect(() => {
+    if (hovered) {
+      document.body.style.cursor = dragged ? 'grabbing' : 'grab'
+      return () => void (document.body.style.cursor = 'auto')
+    }
+  }, [hovered, dragged])
+
+  useFrame((state, delta) => {
     if (dragged) {
-      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
-      dir.copy(vec).sub(state.camera.position).normalize();
-      vec.add(dir.multiplyScalar(state.camera.position.length()));
-      [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
-      card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
+      vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera)
+      dir.copy(vec).sub(state.camera.position).normalize()
+      vec.add(dir.multiplyScalar(state.camera.position.length()))
+      ;[card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp())
+      card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z })
     }
     if (fixed.current) {
-      // Calculate corners
-      const cardPos = card.current.translation();
-      const cardRot = card.current.rotation();
-      // Use 2.5/2 for height offset
-      const topLeft = new THREE.Vector3(-0.6, 2.5/2 - 0.15, 0.025).applyQuaternion(cardRot).add(cardPos);
-      const topRight = new THREE.Vector3(0.6, 2.5/2 - 0.15, 0.025).applyQuaternion(cardRot).add(cardPos);
-
-      // Curve 1 (Left hole to neck)
-      curve1.points[0].copy(topLeft);
-      curve1.points[1].copy(j3.current.translation());
-      curve1.points[2].copy(j2.current.translation());
-      curve1.points[3].copy(j1.current.translation());
-      curve1.points[4].copy(fixed.current.translation());
-      
-      // Curve 2 (Right hole to neck)
-      curve2.points[0].copy(topRight);
-      curve2.points[1].copy(j3.current.translation());
-      curve2.points[2].copy(j2.current.translation());
-      curve2.points[3].copy(j1.current.translation());
-      curve2.points[4].copy(fixed.current.translation());
-
-      band1.current.geometry.setPoints(curve1.getPoints(32));
-      band2.current.geometry.setPoints(curve2.getPoints(32));
+      // Fix most of the jitter when over pulling the card
+      ;[j1, j2].forEach((ref) => {
+        if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation())
+        const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())))
+        ref.current.lerped.lerp(ref.current.translation(), delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)))
+      })
+      // Calculate catmul curve
+      curve.points[0].copy(j3.current.translation())
+      curve.points[1].copy(j2.current.lerped)
+      curve.points[2].copy(j1.current.lerped)
+      curve.points[3].copy(fixed.current.translation())
+      band.current.geometry.setPoints(curve.getPoints(32))
       // Tilt it back towards the screen
-      ang.copy(card.current.angvel());
-      rot.copy(card.current.rotation());
-      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+      ang.copy(card.current.angvel())
+      rot.copy(card.current.rotation())
+      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z })
     }
-  });
+  })
+
+  curve.curveType = 'chordal'
+  bandTexture.wrapS = bandTexture.wrapT = THREE.RepeatWrapping
 
   return (
     <>
       <group position={[0, 4, 0]}>
-        <RigidBody ref={fixed} angularDamping={2} linearDamping={2} type="fixed" />
-        <RigidBody position={[0, -1, 0]} ref={j1} angularDamping={2} linearDamping={2}>
+        <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[0, -2, 0]} ref={j2} angularDamping={2} linearDamping={2}>
+        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[0, -3, 0]} ref={j3} angularDamping={2} linearDamping={2}>
+        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[0, -4, 0]} ref={card} angularDamping={2} linearDamping={2} type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.9, 1.25, 0.02]} />
+        <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
+          <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
-            onPointerUp={(e) => {
-              e.target.releasePointerCapture(e.pointerId);
-              drag(false);
-            }}
-            onPointerDown={(e) => {
-              e.target.setPointerCapture(e.pointerId);
-              drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
-            }}
-          >
-            {/* The Badge Base - Dark sleek card */}
-            <RoundedBox args={[1.8, 2.5, 0.04]} radius={0.05} smoothness={4}>
-              <meshStandardMaterial color="#111111" roughness={0.4} metalness={0.6} />
-            </RoundedBox>
-            
-            {/* Front Photo - Smaller, like an ID photo */}
-            <mesh position={[0, 0.35, 0.022]}>
-              <planeGeometry args={[1.2, 1.4]} />
-              <meshBasicMaterial map={texture} side={THREE.FrontSide} />
+            scale={2.25}
+            position={[0, -1.2, -0.05]}
+            onPointerOver={() => hover(true)}
+            onPointerOut={() => hover(false)}
+            onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
+            onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}>
+            <mesh geometry={nodes.card.geometry}>
+              <meshPhysicalMaterial 
+                map={userTexture} 
+                map-anisotropy={16} 
+                clearcoat={1} 
+                clearcoatRoughness={0.15} 
+                roughness={0.3} 
+                metalness={0.5} 
+              />
             </mesh>
-
-            {/* User Name */}
-            <Text position={[0, -0.6, 0.022]} fontSize={0.16} color="white" anchorX="center" anchorY="middle" letterSpacing={0.1}>
-              BARA KUSUMA
-            </Text>
-
-            {/* User Title */}
-            <Text position={[0, -0.85, 0.022]} fontSize={0.08} color="#d4af37" anchorX="center" anchorY="middle" letterSpacing={0.1}>
-              FULL STACK DEVELOPER
-            </Text>
-
-            {/* Back (Empty or Logo) */}
-            <mesh position={[0, 0, -0.022]} rotation={[0, Math.PI, 0]}>
-              <planeGeometry args={[1.6, 2.3]} />
-              <meshStandardMaterial color="#1a1a1a" />
-            </mesh>
-            <Text position={[0, 0, -0.023]} rotation={[0, Math.PI, 0]} fontSize={0.2} color="rgba(255,255,255,0.1)" anchorX="center" anchorY="middle">
-              HI-HEAL
-            </Text>
-
-            {/* Holes for the lanyard */}
-            <mesh position={[-0.6, 2.5/2 - 0.15, 0.025]}>
-              <cylinderGeometry args={[0.06, 0.06, 0.06]} />
-              <meshBasicMaterial color="#d4af37" />
-            </mesh>
-            <mesh position={[0.6, 2.5/2 - 0.15, 0.025]}>
-              <cylinderGeometry args={[0.06, 0.06, 0.06]} />
-              <meshBasicMaterial color="#d4af37" />
-            </mesh>
+            <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
+            <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band1}>
+      <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial 
-          transparent opacity={0.9} color="#d4af37" 
-          depthTest={false} resolution={[width, height]} 
-          lineWidth={15} sizeAttenuation={false}
-        />
-      </mesh>
-      <mesh ref={band2}>
-        <meshLineGeometry />
-        <meshLineMaterial 
-          transparent opacity={0.9} color="#d4af37" 
-          depthTest={false} resolution={[width, height]} 
-          lineWidth={15} sizeAttenuation={false}
+          color="white" 
+          depthTest={false} 
+          resolution={[width, height]} 
+          useMap 
+          map={bandTexture} 
+          repeat={[-3, 1]} 
+          lineWidth={1} 
         />
       </mesh>
     </>
-  );
-}
-
-export default function DraggableBadge({ photoUrl = '/profile.jpg' }) {
-  return (
-    <div style={{
-      position: 'absolute',
-      top: 0,
-      right: '5%',
-      width: '100%',
-      maxWidth: '500px', // limit width so it doesn't block left content
-      height: '110vh', // very tall so rope is long and dragging works flawlessly
-      zIndex: 50,
-      pointerEvents: 'none', 
-    }}>
-      <div style={{ width: '100%', height: '100%', pointerEvents: 'auto' }}>
-        <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
-          <ambientLight intensity={Math.PI} />
-          <Environment preset="city" />
-          <Suspense fallback={null}>
-            <Physics debug={false} interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
-              <Band textureUrl={photoUrl} />
-            </Physics>
-          </Suspense>
-        </Canvas>
-      </div>
-    </div>
-  );
+  )
 }
