@@ -59,7 +59,7 @@ function Band({ textureUrl }) {
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody position={[2, 0, 0]} ref={card} angularDamping={2} linearDamping={2} type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <CuboidCollider args={[0.8, 1.05, 0.01]} />
           <group
             onPointerUp={(e) => {
               e.target.releasePointerCapture(e.pointerId);
@@ -72,24 +72,24 @@ function Band({ textureUrl }) {
           >
             {/* The Badge Base */}
             <mesh>
-              <boxGeometry args={[1.6, 2.25, 0.04]} />
+              <boxGeometry args={[1.6, 2.1, 0.04]} />
               <meshStandardMaterial color="#f0f0f0" roughness={0.1} metalness={0.1} />
             </mesh>
             
             {/* Front Photo */}
             <mesh position={[0, 0, 0.021]}>
-              <planeGeometry args={[1.5, 2.15]} />
+              <planeGeometry args={[1.5, 2.0]} />
               <meshBasicMaterial map={texture} side={THREE.FrontSide} />
             </mesh>
 
             {/* Back (Empty or Logo) */}
             <mesh position={[0, 0, -0.021]} rotation={[0, Math.PI, 0]}>
-              <planeGeometry args={[1.5, 2.15]} />
+              <planeGeometry args={[1.5, 2.0]} />
               <meshStandardMaterial color="#1a1a1a" />
             </mesh>
 
             {/* Hole for the lanyard */}
-            <mesh position={[0, 1.125 - 0.15, 0.025]}>
+            <mesh position={[0, 2.1/2 - 0.15, 0.025]}>
               <cylinderGeometry args={[0.06, 0.06, 0.06]} />
               <meshBasicMaterial color="#000" />
             </mesh>
@@ -104,7 +104,8 @@ function Band({ textureUrl }) {
           color="#d4af37" /* Gold lanyard */
           depthTest={false} 
           resolution={[width, height]} 
-          lineWidth={1.5} 
+          lineWidth={0.06} 
+          sizeAttenuation={true}
         />
       </mesh>
     </>

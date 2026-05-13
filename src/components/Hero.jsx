@@ -239,7 +239,7 @@ const Hero = () => {
                                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
                                 className="hero-photo-wrap"
-                                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px', width: '100%' }}
+                                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: 'clamp(280px, 35vw, 450px)', height: '500px' }}
                             >
                                 {/* We keep the rings for the glowing aesthetic */}
                                 {/* Decorative ring */}
