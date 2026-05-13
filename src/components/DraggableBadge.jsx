@@ -67,16 +67,16 @@ function Band({ textureUrl }) {
     <>
       <group position={[0, 4, 0]}>
         <RigidBody ref={fixed} angularDamping={2} linearDamping={2} type="fixed" />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} angularDamping={2} linearDamping={2}>
+        <RigidBody position={[0, -1, 0]} ref={j1} angularDamping={2} linearDamping={2}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} angularDamping={2} linearDamping={2}>
+        <RigidBody position={[0, -2, 0]} ref={j2} angularDamping={2} linearDamping={2}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} angularDamping={2} linearDamping={2}>
+        <RigidBody position={[0, -3, 0]} ref={j3} angularDamping={2} linearDamping={2}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[0, 0, 0]} ref={card} angularDamping={2} linearDamping={2} type={dragged ? 'kinematicPosition' : 'dynamic'}>
+        <RigidBody position={[0, -4, 0]} ref={card} angularDamping={2} linearDamping={2} type={dragged ? 'kinematicPosition' : 'dynamic'}>
           <CuboidCollider args={[0.9, 1.25, 0.02]} />
           <group
             onPointerUp={(e) => {
@@ -100,12 +100,12 @@ function Band({ textureUrl }) {
             </mesh>
 
             {/* User Name */}
-            <Text position={[0, -0.6, 0.022]} fontSize={0.16} font="https://fonts.gstatic.com/s/outfit/v36/QGYvz_MVcBeNP4NJtEtq.woff" color="white" anchorX="center" anchorY="middle" letterSpacing={0.1}>
+            <Text position={[0, -0.6, 0.022]} fontSize={0.16} color="white" anchorX="center" anchorY="middle" letterSpacing={0.1}>
               BARA KUSUMA
             </Text>
 
             {/* User Title */}
-            <Text position={[0, -0.85, 0.022]} fontSize={0.08} font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf" color="#d4af37" anchorX="center" anchorY="middle" letterSpacing={0.1}>
+            <Text position={[0, -0.85, 0.022]} fontSize={0.08} color="#d4af37" anchorX="center" anchorY="middle" letterSpacing={0.1}>
               FULL STACK DEVELOPER
             </Text>
 
