@@ -239,65 +239,13 @@ const Hero = () => {
                                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3, duration: 1, ease: "easeOut" }}
                                 className="hero-photo-wrap"
-                                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: 'clamp(280px, 35vw, 450px)', height: '500px' }}
+                                style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', maxWidth: '450px', height: 'clamp(400px, 60vh, 600px)', zIndex: 10 }}
                             >
-                                {/* We keep the rings for the glowing aesthetic */}
-                                {/* Decorative ring */}
-                                <motion.div 
-                                    animate={{ rotate: 360 }} 
-                                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                                    style={{
-                                        position: 'absolute',
-                                        width: 'clamp(260px,36vw,440px)',
-                                        height: 'clamp(260px,36vw,440px)',
-                                        borderRadius: '50%',
-                                        border: `1px dashed ${theme.borderAccent}`,
-                                        opacity: 0.4,
-                                        zIndex: 0
-                                    }}
-                                />
-                                
-                                {/* Inner ring */}
-                                <motion.div 
-                                    animate={{ rotate: -360 }} 
-                                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                                    style={{
-                                        position: 'absolute',
-                                        width: 'clamp(220px,32vw,390px)',
-                                        height: 'clamp(220px,32vw,390px)',
-                                        borderRadius: '50%',
-                                        border: `1px solid ${theme.border}`,
-                                        opacity: 0.8,
-                                        zIndex: 0
-                                    }}
-                                />
-
                                 {/* The 3D Badge overlays here */}
-                                <div style={{ position: 'absolute', inset: -100, zIndex: 10 }}>
+                                <div style={{ position: 'absolute', inset: -50, zIndex: 10 }}>
                                     <DraggableBadge photoUrl={process.env.PUBLIC_URL + '/profile.jpg'} />
                                 </div>
-
-                            {/* Open Source Contributor floating badge */}
-                            <div className="hero-badge"
-                                style={{
-                                    position: 'absolute', bottom: '5%', right: '-5%',
-                                    display: 'flex', alignItems: 'center', gap: 10,
-                                    background: isDark ? 'rgba(5,5,5,0.85)' : 'rgba(255,255,255,0.95)',
-                                    backdropFilter: 'blur(16px)',
-                                    border: `1px solid ${theme.border}`,
-                                    borderRadius: 100, padding: '12px 24px',
-                                    boxShadow: '0 12px 30px rgba(0,0,0,0.15)',
-                                    zIndex: 5,
-                                }}
-                            >
-                                <FiGithub size={18} style={{ color: theme.accent, flexShrink: 0 }} />
-                                <span style={{
-                                    fontFamily: 'Outfit, sans-serif', fontWeight: 600,
-                                    fontSize: 13, color: theme.textPrimary,
-                                    whiteSpace: 'nowrap',
-                                }}>Open Source Contributor</span>
-                            </div>
-                        </motion.div>
+                            </motion.div>
                     </div>
                 </motion.div>
             </div>

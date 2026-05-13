@@ -8,10 +8,11 @@ import { useTexture, Environment } from '@react-three/drei';
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 function Band({ textureUrl }) {
-  const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
+  const band1 = useRef(), band2 = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef();
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const { width, height } = useThree((state) => state.size);
-  const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
+  const [curve1] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
+  const [curve2] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
   const [dragged, drag] = useState(false);
   
   const texture = useTexture(textureUrl);
@@ -32,12 +33,28 @@ function Band({ textureUrl }) {
       card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
     }
     if (fixed.current) {
-      // Calculate catmul curve
-      curve.points[0].copy(j3.current.translation());
-      curve.points[1].copy(j2.current.translation());
-      curve.points[2].copy(j1.current.translation());
-      curve.points[3].copy(fixed.current.translation());
-      band.current.geometry.setPoints(curve.getPoints(32));
+      // Calculate corners
+      const cardPos = card.current.translation();
+      const cardRot = card.current.rotation();
+      const topLeft = new THREE.Vector3(-0.6, 2.1/2 - 0.15, 0.025).applyQuaternion(cardRot).add(cardPos);
+      const topRight = new THREE.Vector3(0.6, 2.1/2 - 0.15, 0.025).applyQuaternion(cardRot).add(cardPos);
+
+      // Curve 1 (Left hole to neck)
+      curve1.points[0].copy(topLeft);
+      curve1.points[1].copy(j3.current.translation());
+      curve1.points[2].copy(j2.current.translation());
+      curve1.points[3].copy(j1.current.translation());
+      curve1.points[4].copy(fixed.current.translation());
+      
+      // Curve 2 (Right hole to neck)
+      curve2.points[0].copy(topRight);
+      curve2.points[1].copy(j3.current.translation());
+      curve2.points[2].copy(j2.current.translation());
+      curve2.points[3].copy(j1.current.translation());
+      curve2.points[4].copy(fixed.current.translation());
+
+      band1.current.geometry.setPoints(curve1.getPoints(32));
+      band2.current.geometry.setPoints(curve2.getPoints(32));
       // Tilt it back towards the screen
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
@@ -88,24 +105,32 @@ function Band({ textureUrl }) {
               <meshStandardMaterial color="#1a1a1a" />
             </mesh>
 
-            {/* Hole for the lanyard */}
-            <mesh position={[0, 2.1/2 - 0.15, 0.025]}>
+            {/* Holes for the lanyard */}
+            <mesh position={[-0.6, 2.1/2 - 0.15, 0.025]}>
+              <cylinderGeometry args={[0.06, 0.06, 0.06]} />
+              <meshBasicMaterial color="#000" />
+            </mesh>
+            <mesh position={[0.6, 2.1/2 - 0.15, 0.025]}>
               <cylinderGeometry args={[0.06, 0.06, 0.06]} />
               <meshBasicMaterial color="#000" />
             </mesh>
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band}>
+      <mesh ref={band1}>
         <meshLineGeometry />
         <meshLineMaterial 
-          transparent 
-          opacity={0.9} 
-          color="#d4af37" /* Gold lanyard */
-          depthTest={false} 
-          resolution={[width, height]} 
-          lineWidth={0.06} 
-          sizeAttenuation={true}
+          transparent opacity={0.9} color="#d4af37" 
+          depthTest={false} resolution={[width, height]} 
+          lineWidth={15} sizeAttenuation={false}
+        />
+      </mesh>
+      <mesh ref={band2}>
+        <meshLineGeometry />
+        <meshLineMaterial 
+          transparent opacity={0.9} color="#d4af37" 
+          depthTest={false} resolution={[width, height]} 
+          lineWidth={15} sizeAttenuation={false}
         />
       </mesh>
     </>
