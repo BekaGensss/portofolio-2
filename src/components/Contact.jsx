@@ -1,193 +1,119 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiMail, FiGithub, FiLinkedin } from 'react-icons/fi';
+import { useTheme } from '../ThemeContext';
+import { SectionHeading } from './About';
 
 const Contact = () => {
-    // Varian untuk animasi masuk
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.2,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: {
-                type: "spring",
-                stiffness: 100,
-            },
-        },
-    };
-
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: '',
-    });
-
-    const [errors, setErrors] = useState({});
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
-
-    const validate = () => {
-        let newErrors = {};
-        if (!formData.name) newErrors.name = 'Nama wajib diisi.';
-        if (!formData.email) {
-            newErrors.email = 'Email wajib diisi.';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Format email tidak valid.';
-        }
-        if (!formData.message) newErrors.message = 'Pesan wajib diisi.';
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (validate()) {
-            setLoading(true);
-
-            // --- PERBAIKAN: Menggunakan URL Getform baru ---
-            const formUrl = "https://getform.io/f/bjjrrgrb"; 
-
-            try {
-                const response = await fetch(formUrl, {
-                    method: 'POST',
-                    body: JSON.stringify(formData),
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    setIsSubmitted(true);
-                    setFormData({ name: '', email: '', message: '' });
-                    setTimeout(() => setIsSubmitted(false), 5000);
-                } else {
-                    alert('Terjadi kesalahan saat mengirim pesan.');
-                }
-            } catch (error) {
-                alert('Terjadi kesalahan jaringan.');
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
+    const { theme, isDark, lang } = useTheme();
 
     return (
-        <section id="contact" className="py-20 lg:py-32">
-            <motion.div
-                initial="hidden"
-                whileInView="visible"
-                variants={containerVariants}
-                viewport={{ once: true, amount: 0.3 }}
-                className="container mx-auto px-6 text-center"
-            >
-                <motion.h2
-                    variants={itemVariants}
-                    className="text-4xl lg:text-5xl font-extrabold text-teal-500 mb-4"
-                >
-                    Hubungi Saya
-                </motion.h2>
-                <motion.p
-                    variants={itemVariants}
-                    className="text-lg lg:text-xl text-gray-400 max-w-3xl mx-auto mb-12"
-                >
-                    kritik, saran, atau ingin berkolaborasi? Jangan ragu untuk menghubungi saya melalui formulir di bawah ini.
-                </motion.p>
-                
-                {isSubmitted && (
-                    <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-md max-w-xl mx-auto"
-                        role="alert"
-                    >
-                        <div className="flex items-center">
-                            <FiCheckCircle className="text-2xl mr-3" />
-                            <p className="font-semibold">Pesan Anda berhasil dikirim!</p>
-                        </div>
-                        <p className="text-sm mt-1">Saya akan segera merespons Anda.</p>
-                    </motion.div>
-                )}
+        <section id="contact" style={{ padding:'clamp(64px,10vh,100px) 0', position:'relative' }}>
+            <div className="hdiv" />
+            <div style={{ maxWidth:1200, margin:'0 auto', padding:'clamp(40px,6vh,72px) clamp(16px,4vw,40px) 0' }}>
 
-                <motion.form
-                    variants={containerVariants}
-                    className="max-w-xl mx-auto text-left"
-                    onSubmit={handleSubmit}
-                    // --- PERBAIKAN: Menggunakan URL Getform baru di sini juga ---
-                    action="https://getform.io/f/bjjrrgrb" 
-                    method="POST"
+                {/* Label */}
+                <motion.div
+                    initial={{ y:20, opacity:0 }} whileInView={{ y:0, opacity:1 }}
+                    transition={{ duration:0.55 }} viewport={{ once:true }}
+                    style={{ marginBottom:24 }}
                 >
-                    <motion.div variants={itemVariants} className="mb-6">
-                        <label htmlFor="name" className="block text-gray-300 font-semibold mb-2">Nama</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className={`w-full p-3 rounded-lg bg-gray-700 border focus:outline-none focus:ring-2 ${
-                                errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-teal-500'
-                            } text-gray-100 transition-colors duration-300`}
-                            placeholder="Nama Lengkap Anda"
-                        />
-                        {errors.name && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><FiAlertCircle />{errors.name}</p>}
+                    <span style={{ fontFamily:'Outfit, sans-serif', fontWeight:700, fontSize:12, color:theme.textMuted, letterSpacing:3, textTransform:'uppercase' }}>
+                        // HUBUNGI SAYA
+                    </span>
+                </motion.div>
+
+                <motion.div
+                    initial={{ y:24, opacity:0 }} whileInView={{ y:0, opacity:1 }}
+                    transition={{ duration:0.55, delay:0.05 }} viewport={{ once:true }}
+                    style={{ marginBottom:'clamp(40px,6vh,64px)' }}
+                >
+                    <SectionHeading solid="KONTAK" outline="SAYA." theme={theme} isDark={isDark} />
+                </motion.div>
+
+                {/* Profile card — like reference */}
+                <motion.div
+                    initial={{ y:30, opacity:0, scale:0.97 }}
+                    whileInView={{ y:0, opacity:1, scale:1 }}
+                    transition={{ duration:0.6, ease:[0.16,1,0.3,1] }}
+                    viewport={{ once:true }}
+                    style={{
+                        maxWidth:500, margin:'0 auto',
+                        background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+                        border:`1px solid ${theme.border}`,
+                        borderRadius:24, padding:32,
+                        display:'flex', flexDirection:'column', alignItems:'center',
+                        gap:16,
+                    }}
+                >
+                    {/* Profile photo */}
+                    <div style={{
+                        width:90, height:90, borderRadius:'50%', overflow:'hidden',
+                        border:'3px solid #d4af37',
+                        boxShadow:'0 0 30px rgba(212, 175, 55,0.2)',
+                    }}>
+                        <img src={process.env.PUBLIC_URL + '/profile.jpg'} alt="Bara Kusuma"
+                            style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    </div>
+
+                    {/* Name + desc */}
+                    <motion.div initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }} viewport={{ once: true }} style={{ textAlign:'center' }}>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 11, color: theme.textMuted, letterSpacing: 3, textTransform: 'uppercase' }}>// {lang === 'ID' ? 'MARI TERHUBUNG' : "LET'S CONNECT"}</span>
+                        <SectionHeading solid={lang === 'ID' ? 'KONTAK' : 'CONTACT'} outline={lang === 'ID' ? 'SAYA.' : 'ME.'} theme={theme} isDark={isDark} />
+                        <p style={{
+                            fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
+                            fontSize: 'clamp(14px,1.5vw,16px)',
+                            lineHeight: 1.7, color: theme.textSecondary,
+                            maxWidth: 360, marginTop: 12, margin: '12px auto 0 auto',
+                        }}>
+                            {lang === 'ID' ? 'Punya ide proyek, peluang kolaborasi, atau sekadar ingin menyapa? Saya selalu terbuka untuk diskusi baru.' : 'Have a project idea, collaboration opportunity, or just want to say hi? I am always open to new discussions.'}
+                        </p>
                     </motion.div>
-                    <motion.div variants={itemVariants} className="mb-6">
-                        <label htmlFor="email" className="block text-gray-300 font-semibold mb-2">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={`w-full p-3 rounded-lg bg-gray-700 border focus:outline-none focus:ring-2 ${
-                                errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-teal-500'
-                            } text-gray-100 transition-colors duration-300`}
-                            placeholder="Alamat Email Anda"
-                        />
-                        {errors.email && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><FiAlertCircle />{errors.email}</p>}
-                    </motion.div>
-                    <motion.div variants={itemVariants} className="mb-6">
-                        <label htmlFor="message" className="block text-gray-300 font-semibold mb-2">Pesan</label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="4"
-                            value={formData.message}
-                            onChange={handleChange}
-                            className={`w-full p-3 rounded-lg bg-gray-700 border focus:outline-none focus:ring-2 ${
-                                errors.message ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-teal-500'
-                            } text-gray-100 transition-colors duration-300`}
-                            placeholder="Tulis pesan Anda di sini"
-                        ></textarea>
-                        {errors.message && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><FiAlertCircle />{errors.message}</p>}
-                    </motion.div>
-                    <motion.div variants={itemVariants} className="text-center">
-                        <button
-                            type="submit"
-                            className={`bg-teal-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-teal-600 transform transition-all duration-300 hover:scale-105 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            disabled={loading}
-                        >
-                            {loading ? 'Mengirim...' : 'Kirim Pesan'}
-                        </button>
-                    </motion.div>
-                </motion.form>
-            </motion.div>
+
+                    {/* Social links */}
+                    <div style={{ display:'flex', gap:12 }}>
+                        {[
+                            { href:'mailto:barakusuma911@gmail.com', icon:<FiMail size={15}/>,     label:'Email'    },
+                            { href:'https://github.com/BekaGensss',  icon:<FiGithub size={15}/>,   label:'GitHub'   },
+                            { href:'https://id.linkedin.com/in/bara-kusuma-707067294', icon:<FiLinkedin size={15}/>, label:'LinkedIn' },
+                        ].map(s => (
+                            <a key={s.label} href={s.href}
+                                target={s.href.startsWith('http') ? '_blank' : undefined}
+                                rel="noopener noreferrer" aria-label={s.label}
+                                style={{
+                                    width:38, height:38, borderRadius:10,
+                                    background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+                                    border:`1px solid ${theme.border}`,
+                                    display:'flex', alignItems:'center', justifyContent:'center',
+                                    color:theme.textMuted, textDecoration:'none', transition:'all 0.2s',
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(212, 175, 55,0.4)'; e.currentTarget.style.color='#d4af37'; e.currentTarget.style.transform='translateY(-2px)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor=theme.border; e.currentTarget.style.color=theme.textMuted; e.currentTarget.style.transform='translateY(0)'; }}
+                            >{s.icon}</a>
+                        ))}
+                    </div>
+
+                    {/* CONTACT ME button */}
+                    <a href="mailto:barakusuma911@gmail.com"
+                        className="btn-p"
+                        style={{
+                            display:'flex', alignItems:'center', justifyContent:'center', gap:8,
+                            width:'100%', padding:'14px 32px',
+                            background:'#d4af37', borderRadius:100,
+                            fontFamily:'Outfit, sans-serif', fontWeight:800,
+                            fontSize:14, color:'#000',
+                            textDecoration:'none', letterSpacing:1,
+                            transition:'all 0.25s ease',
+                            marginTop:4,
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background='#fde68a'; e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 12px 32px rgba(212, 175, 55,0.35)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background='#d4af37'; e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}
+                    >
+                        <FiMail size={15} /> HUBUNGI SAYA
+                    </a>
+                </motion.div>
+
+            </div>
         </section>
     );
 };

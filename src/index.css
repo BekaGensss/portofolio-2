@@ -1,66 +1,458 @@
-/* src/index.css */
-
-/* --- PERBAIKAN: Impor font Poppins dari paket NPM (harus di atas) --- */
-@import '@fontsource/poppins/400.css';
-@import '@fontsource/poppins/600.css';
-@import '@fontsource/poppins/700.css';
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Terapkan font ke seluruh halaman */
+/* ========================================
+   RESET & BASE
+======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
 body {
-    font-family: 'Poppins', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  background: #050505;
+  color: #ffffff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.7;
+}
+body.light-mode {
+  background: #faf9f6;
+  color: #0a0a0a;
 }
 
-/* CSS kustom untuk efek loading dan scrollbar */
-.loader-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #0d1117;
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
+/* ========================================
+   DIAGONAL LINE PATTERN BACKGROUND
+======================================== */
+.bg-pattern {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(255,255,255,0.015) 40px,
+    rgba(255,255,255,0.015) 41px
+  );
+}
+body.light-mode .bg-pattern {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(0,0,0,0.025) 40px,
+    rgba(0,0,0,0.025) 41px
+  );
 }
 
-.loader-container.hidden {
-    opacity: 0;
-    pointer-events: none;
+/* ========================================
+   SCROLLBAR
+======================================== */
+::-webkit-scrollbar { width: 4px; background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 4px; }
+
+/* ========================================
+   KEYFRAMES
+======================================== */
+@keyframes spin       { to { transform: rotate(360deg); } }
+@keyframes float      { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes blink      { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes marquee    { 0%{transform:translateX(0%)} 100%{transform:translateX(-50%)} }
+@keyframes fadeInUp   { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+@keyframes tapeDrift  {
+  0%   { transform: translateX(-100%) rotate(-12deg); }
+  100% { transform: translateX(110vw) rotate(-12deg); }
 }
 
-.loader {
-    width: 80px;
-    height: 80px;
-    border: 5px solid #4ade80;
-    border-top-color: #1f2937;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+/* ========================================
+   TYPOGRAPHY
+======================================== */
+.font-display { font-family: 'Outfit', sans-serif; }
+
+/* Heading: first part solid, second part outline/muted */
+.heading-outline {
+  -webkit-text-stroke: 2px currentColor;
+  color: transparent !important;
+}
+body.light-mode .heading-outline {
+  -webkit-text-stroke: 2px rgba(0,0,0,0.25);
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+.text-gradient {
+  background: linear-gradient(135deg, #e5c07b 0%, #d4af37 50%, #f9e596 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   MARQUEE
+======================================== */
+.marquee-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, white 8%, white 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, white 8%, white 92%, transparent);
+}
+.marquee-content {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+.marquee-content:hover { animation-play-state: paused; }
+
+/* ========================================
+   SECTION TAG / PILL
+======================================== */
+.stag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.2);
+  color: #d4af37;
+}
+body.light-mode .stag {
+  background: rgba(184,134,11,0.08);
+  border-color: rgba(184,134,11,0.2);
+  color: #8b6508;
+}
+
+/* ========================================
+   NAVBAR - FLOATING PILL
+======================================== */
+.nav-pill {
+  background: rgba(10,10,10,0.75);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+}
+body.light-mode .nav-pill {
+  background: rgba(245,245,240,0.8);
+  border-color: rgba(0,0,0,0.1);
+}
+
+/* ========================================
+   BUTTONS
+======================================== */
+.btn-p {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 100px;
+  background: #d4af37;
+  color: #050505;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+.btn-p:hover {
+  background: #e5c07b;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(212,175,55,0.3);
+}
+body.light-mode .btn-p { background: #050505; color: #ffffff; }
+body.light-mode .btn-p:hover { background: #1a1a1a; box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+
+.btn-s {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 30px;
+  border-radius: 100px;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+.btn-s:hover {
+  border-color: rgba(212,175,55,0.5);
+  color: #d4af37;
+  transform: translateY(-2px);
+  background: rgba(212,175,55,0.08);
+}
+body.light-mode .btn-s { color: rgba(10,10,10,0.8); border-color: rgba(0,0,0,0.15); }
+body.light-mode .btn-s:hover { border-color: #b8860b; color: #8b6508; background: rgba(184,134,11,0.08); }
+
+/* ========================================
+   FORM INPUTS
+======================================== */
+.finput {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s ease;
+  -webkit-appearance: none;
+}
+.finput::placeholder { color: rgba(255,255,255,0.22); }
+.finput:focus {
+  background: rgba(212,175,55,0.04);
+  border-color: rgba(212,175,55,0.35);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.07);
+}
+.finput.err { border-color: rgba(244,63,94,0.5); }
+body.light-mode .finput {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.08);
+  color: #0a0a0a;
+}
+body.light-mode .finput::placeholder { color: rgba(10,10,10,0.35); }
+body.light-mode .finput:focus {
+  background: rgba(184,134,11,0.03);
+  border-color: rgba(184,134,11,0.35);
+}
+
+/* ========================================
+   CHIP / TECH BADGE
+======================================== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.chip:hover {
+  background: rgba(212,175,55,0.08);
+  border-color: rgba(212,175,55,0.25);
+  color: #d4af37;
+  transform: translateY(-2px);
+}
+body.light-mode .chip {
+  background: rgba(0,0,0,0.03);
+  border-color: rgba(0,0,0,0.06);
+  color: rgba(10,10,10,0.7);
+}
+body.light-mode .chip:hover {
+  background: rgba(184,134,11,0.08);
+  border-color: rgba(184,134,11,0.2);
+  color: #8b6508;
+}
+
+/* ========================================
+   GLASS CARD
+======================================== */
+.gcard {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  transition: all 0.3s ease;
+}
+.gcard:hover {
+  border-color: rgba(212,175,55,0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+body.light-mode .gcard {
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(0,0,0,0.05);
+}
+body.light-mode .gcard:hover {
+  border-color: rgba(184,134,11,0.2);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.08);
+}
+
+/* ========================================
+   HORIZONTAL DIVIDER
+======================================== */
+.hdiv {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+}
+body.light-mode .hdiv {
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.07), transparent);
+}
+
+/* ========================================
+   TYPED CURSOR
+======================================== */
+.typed-cursor { color: #d4af37; animation: blink 0.75s ease infinite; }
+
+/* ========================================
+   FLOAT ANIM
+======================================== */
+.float-anim { animation: float 5s ease-in-out infinite; }
+
+/* ========================================
+   NAV RESPONSIVE
+======================================== */
+/* Desktop pill */
+.nav-desk-pill { display: flex !important; }
+.nav-mob-bar   { display: none !important; }
+
+@media (max-width: 767px) {
+  .nav-desk-pill { display: none !important; }
+  .nav-mob-bar   { display: flex !important; }
+}
+
+/* Legacy classes (keep for compatibility) */
+.nav-desk { display: none !important; }
+.nav-mob  { display: flex !important; }
+@media (min-width: 768px) {
+  .nav-desk { display: flex !important; }
+  .nav-mob  { display: none !important; }
+}
+
+/* ========================================
+   NUMBERED PROJ ITEM
+======================================== */
+.proj-item {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.5vw, 28px);
+  padding: clamp(16px, 2.5vw, 22px) 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.proj-item:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+body.light-mode .proj-item { border-bottom-color: rgba(0,0,0,0.07); }
+body.light-mode .proj-item:first-child { border-top-color: rgba(0,0,0,0.07); }
+
+/* ========================================
+   CERT CARD
+======================================== */
+.cert-card {
+  border-radius: 20px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.cert-card:hover {
+  border-color: rgba(212,175,55,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+body.light-mode .cert-card {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(0,0,0,0.06);
+}
+body.light-mode .cert-card:hover {
+  border-color: rgba(184,134,11,0.25);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.08);
+}
+
+/* ========================================
+   RESPONSIVE — MOBILE FIRST
+======================================== */
+
+/* Mobile: general content padding-top for fixed mobile navbar */
+@media (max-width: 767px) {
+  /* hero section accounts for the 56px mobile navbar */
+  #home { padding-top: 72px !important; }
+
+  /* reduce section vertical padding */
+  section { padding-top: clamp(40px,7vh,64px) !important; padding-bottom: clamp(28px,5vh,48px) !important; }
+
+  /* section inner containers */
+  section > div { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* buttons smaller on mobile */
+  .btn-p, .btn-s { padding: 10px 20px; font-size: 12.5px; }
+
+  /* stag pill smaller */
+  .stag { font-size: 9px; letter-spacing: 1.5px; padding: 4px 12px; }
+
+  /* chip */
+  .chip { font-size: 12px; padding: 6px 14px; }
+
+  /* hide project hover preview on mobile */
+  .proj-item-extra { display: none; }
+
+  /* cert card grid single col */
+  .cert-grid { grid-template-columns: 1fr !important; }
+
+  /* Hero flex layout stacks on mobile */
+  .hero-flex-row {
+    flex-direction: column-reverse !important;
+    align-items: center !important;
+  }
+  /* Hero photo center on mobile */
+  .hero-photo-wrap {
+    align-items: center !important;
+    margin-bottom: 20px;
+  }
+  /* Stats row wrap */
+  .stats-row {
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+  /* About grid: single column */
+  .about-grid {
+    grid-template-columns: 1fr !important;
+  }
+  /* Tech grid 4 cols still works, reduce gap */
+  .tech-grid {
+    gap: 6px !important;
+  }
+}
+
+/* Responsive header alignments */
+@media (max-width: 768px) {
+    .section-header-flex {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+    }
+    .header-desc-container {
+        align-items: flex-start !important;
+    }
+    .header-desc-text {
+        text-align: left !important;
     }
 }
 
-/* Scrollbar kustom untuk estetika */
-::-webkit-scrollbar {
-    width: 8px;
-    background-color: transparent;
+@media (max-width: 480px) {
+  .btn-p, .btn-s { padding: 9px 18px; font-size: 12px; }
+  .chip { font-size: 11px; padding: 5px 12px; }
+  /* Tech grid 4 cols on very small screens */
+  .tech-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 5px !important;
+  }
 }
 
-::-webkit-scrollbar-thumb {
-    background-color: #4ade80;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #16a34a;
-}
+/* ========================================
+   NUMBERED PROJ ITEM (light mode)
+======================================== */
