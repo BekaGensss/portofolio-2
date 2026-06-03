@@ -176,6 +176,7 @@ const Hero = () => {
                             <motion.div
                                 initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.3, duration: 0.6 }}
+                                className="hero-typed-container"
                                 style={{
                                     fontSize: 'clamp(15px,2vw,18px)',
                                     fontFamily: 'Inter, sans-serif', fontWeight: 400,
@@ -185,7 +186,7 @@ const Hero = () => {
                                     letterSpacing: '0.5px'
                                 }}
                             >
-                                <span style={{ width: 40, height: 2, background: theme.accent }} />
+                                <span className="hero-typed-line" style={{ width: 40, height: 2, background: theme.accent }} />
                                 <span>{lang === 'ID' ? 'Saya seorang' : 'I am a'} <span style={{ color: theme.textPrimary, fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}><span ref={el} /></span></span>
                             </motion.div>
 
@@ -193,6 +194,7 @@ const Hero = () => {
                             <motion.div
                                 initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.4, duration: 0.6 }}
+                                className="hero-desc-box"
                                 style={{
                                     background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.6)',
                                     backdropFilter: 'blur(24px)',
@@ -217,6 +219,7 @@ const Hero = () => {
                             <motion.div
                                 initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.5, duration: 0.6 }}
+                                className="hero-buttons-container"
                                 style={{
                                     display: 'inline-flex', flexWrap: 'wrap', gap: 16,
                                 }}
@@ -229,13 +232,18 @@ const Hero = () => {
                                 </a>
                                 <a href={process.env.PUBLIC_URL + '/CV-Bara-Kusuma.pdf'} download="CV-Bara-Kusuma.pdf"
                                     className="btn-s"
+                                    style={{
+                                        color: isDark ? 'rgba(255,255,255,0.85)' : '#000000',
+                                        borderColor: isDark ? 'rgba(255,255,255,0.2)' : '#000000',
+                                        fontWeight: 600
+                                    }}
                                 >
                                     <FiDownload size={16} /> {lang === 'ID' ? 'Unduh CV' : 'Download CV'}
                                 </a>
                             </motion.div>
                         </div>
 
-                        {/* RIGHT: Modern Circular Profile Frame */}
+                        {/* RIGHT: Modern Card Profile Frame */}
                         <div className="hero-profile-container" style={{ 
                             flex: '1 1 450px', 
                             minWidth: 0, 
@@ -249,71 +257,22 @@ const Hero = () => {
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                                style={{ position: 'relative' }}
+                                className="profile-card-wrapper"
                             >
-                                {/* Glowing Background Orbs */}
-                                <div style={{
-                                    position: 'absolute',
-                                    inset: '-20px',
-                                    background: isDark 
-                                        ? 'radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%)' 
-                                        : 'radial-gradient(circle, rgba(184,134,11,0.1) 0%, transparent 70%)',
-                                    borderRadius: '50%',
-                                    filter: 'blur(20px)',
-                                    zIndex: -1
-                                }} />
-
-                                {/* Main Circular Frame */}
-                                <motion.div 
-                                    animate={{ y: [0, -15, 0] }}
-                                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                    style={{
-                                        width: 'clamp(280px, 35vw, 420px)',
-                                        height: 'clamp(280px, 35vw, 420px)',
-                                        borderRadius: '50%',
-                                        padding: '12px',
-                                        background: isDark 
-                                            ? 'linear-gradient(135deg, #d4af37 0%, #1a1a1a 50%, #d4af37 100%)'
-                                            : 'linear-gradient(135deg, #b8860b 0%, #ffffff 50%, #b8860b 100%)',
-                                        boxShadow: isDark 
-                                            ? '0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(212,175,55,0.2)'
-                                            : '0 20px 50px rgba(0,0,0,0.1), inset 0 0 20px rgba(184,134,11,0.1)',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        position: 'relative',
-                                        overflow: 'hidden'
-                                    }}
-                                >
-                                    <div style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        borderRadius: '50%',
-                                        overflow: 'hidden',
-                                        border: `4px solid ${isDark ? '#000' : '#fff'}`,
-                                        position: 'relative'
+                                <div className="profile-card" style={{
+                                    boxShadow: isDark ? '0 20px 50px rgba(0,0,0,0.5)' : '0 20px 50px rgba(0,0,0,0.1)'
+                                }}>
+                                    <div className="profile-card-glow"></div>
+                                    <div className="profile-card-inner" style={{
+                                        background: isDark ? '#1a1a1a' : '#f0f0f0'
                                     }}>
                                         <img 
                                             src={process.env.PUBLIC_URL + '/profile.jpg'} 
                                             alt="Bara Kusuma"
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                                transform: 'scale(1.05)'
-                                            }}
+                                            className="profile-img"
                                         />
                                     </div>
-
-                                    {/* Overlay Gradient for depth */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        borderRadius: '50%',
-                                        boxShadow: 'inset 0 0 50px rgba(0,0,0,0.2)',
-                                        pointerEvents: 'none'
-                                    }} />
-                                </motion.div>
+                                </div>
                             </motion.div>
                         </div>
                     </div>
@@ -328,42 +287,130 @@ const Hero = () => {
                     opacity: 0.95;
                 }
 
+                /* PROFILE CARD STYLES */
+                .profile-card-wrapper {
+                    position: relative;
+                }
+                
+                .profile-card {
+                    width: clamp(220px, 30vw, 280px);
+                    aspect-ratio: 4/5;
+                    position: relative;
+                    display: flex;
+                    place-content: center;
+                    place-items: center;
+                    overflow: hidden;
+                    border-radius: 20px;
+                }
+
+                .profile-card-glow {
+                    position: absolute;
+                    width: 150px;
+                    height: 250%;
+                    background-image: linear-gradient(180deg, rgb(0, 183, 255), rgb(255, 48, 255));
+                    animation: rotBGimg 4s linear infinite;
+                    transition: all 0.2s linear;
+                }
+
+                @keyframes rotBGimg {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+
+                .profile-card-inner {
+                    position: absolute;
+                    inset: 5px;
+                    border-radius: 15px;
+                    overflow: hidden;
+                    z-index: 1;
+                }
+                
+                .profile-img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center 15%;
+                    transform: scale(1.03);
+                }
+
                 .hero-profile-container {
-                    padding: 40px 0;
+                    padding: 20px 0;
                 }
 
                 /* Mobile: hero layout */
                 @media(max-width:968px) {
                     .hero-flex-row {
-                        flex-direction: column-reverse !important;
-                        text-align: center;
-                        gap: 40px !important;
+                        flex-direction: column-reverse !important; /* Put profile on top */
+                        text-align: left;
+                        gap: 20px !important;
+                        padding-top: 0px;
                     }
                     .hero-flex-row > div:first-child {
-                        flex: 1 1 auto !important;
+                        flex: 0 1 auto !important; /* reset flex basis */
                         width: 100%;
                         display: flex;
                         flex-direction: column;
-                        align-items: center;
-                        padding-bottom: 20px;
+                        align-items: flex-start !important; /* left align content */
+                        padding-bottom: 0px;
+                    }
+                    .profile-card {
+                        width: clamp(240px, 60vw, 320px) !important;
                     }
                     .hero-profile-container {
+                        flex: 0 1 auto !important; /* FIX ENORMOUS GAP: reset vertical flex-basis */
                         width: 100%;
-                        margin-bottom: 0px;
-                        margin-top: 0px;
-                        padding: 20px 0;
+                        margin-bottom: 10px !important;
+                        margin-top: 0px !important;
+                        padding: 0 !important;
+                        display: flex;
+                        justify-content: center !important; /* center profile picture */
+                    }
+                    .hero-flex-row p, .hero-flex-row h1 {
+                        text-align: left;
                     }
                     .hero-flex-row h1 {
-                        font-size: clamp(2.5rem, 12vw, 4rem) !important;
+                        font-size: clamp(3rem, 14vw, 4rem) !important;
+                        margin-bottom: 15px !important;
+                    }
+                    .hero-typed-container {
+                        justify-content: flex-start !important; /* left align typed */
+                        width: 100%;
+                        margin-bottom: 20px !important;
+                    }
+                    .hero-typed-line {
+                        display: none !important;
+                    }
+                    .hero-desc-box {
+                        text-align: center !important; /* center align description */
+                        margin-left: auto !important; 
+                        margin-right: auto !important;
+                        width: 100% !important; /* Full width */
+                    }
+                    .hero-desc-box p {
+                        text-align: center !important;
+                    }
+                    .hero-buttons-container {
+                        display: flex !important;
+                        width: 100%;
+                        justify-content: center !important; /* center align buttons */
+                        margin-top: 10px;
+                    }
+                    
+                    #home {
+                        padding-top: 80px !important;
+                        padding-bottom: 40px !important;
                     }
                 }
                 
                 @media(max-width:480px) {
                     #home {
-                        padding-top: 40px !important;
+                        padding-top: 80px !important;
                     }
                     .hero-profile-container {
-                        padding: 10px 0;
+                        margin-bottom: 10px !important;
+                    }
+                    .hero-desc-box {
+                        padding: 20px !important; /* slightly smaller padding on small screens */
                     }
                 }
             `}</style>

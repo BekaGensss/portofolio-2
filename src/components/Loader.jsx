@@ -4,238 +4,169 @@ import styled from 'styled-components';
 const Loader = ({ theme }) => {
   return (
     <StyledWrapper theme={theme}>
-      <div className="capybaraloader">
-        <div className="capybara">
-          <div className="capyhead">
-            <div className="capyear">
-              <div className="capyear2" />
-            </div>
-            <div className="capyear" />
-            <div className="capymouth">
-              <div className="capylips" />
-              <div className="capylips" />
-            </div>
-            <div className="capyeye" />
-            <div className="capyeye" />
-          </div>
-          <div className="capyleg" />
-          <div className="capyleg2" />
-          <div className="capyleg2" />
-          <div className="capy" />
-        </div>
-        <div className="loader">
-          <div className="loaderline" />
+      <div className="circ">
+        <div className="load">Loading...</div>
+        <div className="hands" />
+        <div className="body" />
+        <div className="head">
+          <div className="eye" />
         </div>
       </div>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
+  @import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap');
+
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
 
-  .capybaraloader {
-    /* Responsive font-size agar unit 'em' menyesuaikan secara dinamis di layar HP maupun Desktop */
-    font-size: clamp(12px, 4vw, 20px);
-    width: 14em;
-    height: 10em;
-    position: relative;
-    z-index: 1;
-    --color: rgb(204, 125, 45);
-    --color2: rgb(83, 56, 28);
-    transform: scale(1);
-    transition: all 0.3s ease;
-  }
+  /* Design Tokens adapting to theme */
+  --char-bg: ${props => props.theme === 'light' ? '#111111' : '#eeeeee'};
+  --char-highlight: ${props => props.theme === 'light' ? 'rgba(240, 220, 220, 1)' : 'rgba(17, 17, 17, 1)'};
+  --eye-color: ${props => props.theme === 'light' ? 'rgba(240, 220, 220, 1)' : 'rgba(17, 17, 17, 1)'};
+  --text-color: ${props => props.theme === 'light' ? 'rgb(120, 120, 120)' : 'rgb(180, 180, 180)'};
 
-  .capybara {
-    width: 100%;
-    height: 7.5em;
+  .circ {
+    backface-visibility: hidden;
+    margin: 60px auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 0px 0px 50px 50px;
     position: relative;
     z-index: 1;
-  }
-  .loader {
-    width: 100%;
-    height: 2.5em;
-    position: relative;
-    z-index: 1;
+    left: 0%;
+    top: 0%;
     overflow: hidden;
   }
-  .capy {
-    width: 85%;
-    height: 100%;
-    background: linear-gradient(var(--color), 90%, var(--color2));
-    border-radius: 45%;
+
+  .eye {
+    width: 20px;
+    height: 8px;
+    background-color: var(--eye-color);
+    border-radius: 0px 0px 20px 20px;
     position: relative;
-    z-index: 1;
-    animation: movebody 1s linear infinite;
+    left: 10px;
+    top: 40px;
+    box-shadow: 40px 0px 0px 0px var(--eye-color);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .capyhead {
-    width: 7.5em;
-    height: 7em;
-    bottom: 0em;
-    right: 0em;
-    position: absolute;
-    background-color: var(--color);
-    z-index: 3;
-    border-radius: 3.5em;
-    box-shadow: -1em 0em var(--color2);
-    animation: movebody 1s linear infinite;
+
+  .head {
+    backface-visibility: hidden;
+    position: relative;
+    margin: -250px auto;
+    width: 80px;
+    height: 80px;
+    background-color: var(--char-bg);
+    border-radius: 50px;
+    box-shadow: inset -4px 2px 0px 0px var(--char-highlight);
+    animation: headAnim 1.5s infinite alternate;
+    animation-timing-function: ease-out;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
-  .capyear {
-    width: 2em;
-    height: 2em;
-    background: linear-gradient(-45deg, var(--color), 90%, var(--color2));
-    top: 0em;
-    left: 0em;
-    border-radius: 100%;
+
+  .body {
+    position: relative;
+    margin: 90px auto;
+    width: 140px;
+    height: 120px;
+    background-color: var(--char-bg);
+    border-radius: 50px/25px;
+    box-shadow: inset -5px 2px 0px 0px var(--char-highlight);
+    animation: bodyAnim 1.5s infinite alternate;
+    animation-timing-function: ease-out;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  @keyframes headAnim {
+    0% {
+      top: 0px;
+    }
+    50% {
+      top: 10px;
+    }
+    100% {
+      top: 0px;
+    }
+  }
+
+  @keyframes bodyAnim {
+    0% {
+      top: -5px;
+    }
+    50% {
+      top: 10px;
+    }
+    100% {
+      top: -5px;
+    }
+  }
+
+  .hands {
+    margin-top: 140px;
+    width: 120px;
+    height: 120px;
     position: absolute;
+    background-color: var(--char-bg);
+    border-radius: 20px;
+    box-shadow: -1px -4px 0px 0px var(--char-highlight);
+    transform: rotate(45deg);
+    top: 75%;
+    left: 16%;
+    z-index: 2;
+    animation: bodyAnim 1.5s infinite alternate;
+    animation-timing-function: ease-out;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .load {
+    position: absolute;
+    width: 7ch;
+    height: 32px;
+    text-align: left;
+    line-height: 32px;
+    margin: -10px auto;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-color);
+    left: 12%;
+    top: 5%;
+    animation: fontAnim 3.75s infinite;
+    animation-timing-function: ease-out;
+    word-wrap: break-word;
+    display: block;
     overflow: hidden;
-    z-index: 3;
-  }
-  .capyear:nth-child(2) {
-    left: 5em;
-    background: linear-gradient(25deg, var(--color), 90%, var(--color2));
-  }
-  .capyear2 {
-    width: 100%;
-    height: 1em;
-    background-color: var(--color2);
-    bottom: 0em;
-    left: 0.5em;
-    border-radius: 100%;
-    position: absolute;
-    transform: rotate(-45deg);
-  }
-  .capymouth {
-    width: 3.5em;
-    height: 2em;
-    background-color: var(--color2);
-    position: absolute;
-    bottom: 0em;
-    left: 2.5em;
-    border-radius: 50%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0.5em;
-  }
-  .capylips {
-    width: 0.25em;
-    height: 0.75em;
-    border-radius: 100%;
-    transform: rotate(-45deg);
-    background-color: var(--color);
-  }
-  .capylips:nth-child(2) {
-    transform: rotate(45deg);
-  }
-  .capyeye {
-    width: 2em;
-    height: 0.5em;
-    background-color: var(--color2);
-    position: absolute;
-    bottom: 3.5em;
-    left: 1.5em;
-    border-radius: 5em;
-    transform: rotate(45deg);
-  }
-  .capyeye:nth-child(4) {
-    transform: rotate(-45deg);
-    left: 5.5em;
-    width: 1.75em;
-  }
-  .capyleg {
-    width: 6em;
-    height: 5em;
-    bottom: 0em;
-    left: 0em;
-    position: absolute;
-    background: linear-gradient(var(--color), 95%, var(--color2));
-    z-index: 2;
-    border-radius: 2em;
-    animation: movebody 1s linear infinite;
-  }
-  .capyleg2 {
-    width: 1.75em;
-    height: 3em;
-    bottom: 0em;
-    left: 3.25em;
-    position: absolute;
-    background: linear-gradient(var(--color), 80%, var(--color2));
-    z-index: 2;
-    border-radius: 0.75em;
-    box-shadow: inset 0em -0.5em var(--color2);
-    animation: moveleg 1s linear infinite;
-  }
-  .capyleg2:nth-child(3) {
-    width: 1.25em;
-    left: 0.5em;
-    height: 2em;
-    animation: moveleg2 1s linear infinite 0.075s;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
   }
 
-  @keyframes moveleg {
+  @keyframes fontAnim {
     0% {
-      transform: rotate(-45deg) translateX(-5%);
+      width: 7ch;
     }
-    50% {
-      transform: rotate(45deg) translateX(5%);
+    16% {
+      width: 8ch;
+    }
+    32% {
+      width: 9ch;
+    }
+    48% {
+      width: 10ch;
+    }
+    64% {
+      width: 11ch;
+    }
+    80% {
+      width: 12ch;
     }
     100% {
-      transform: rotate(-45deg) translateX(-5%);
-    }
-  }
-
-  @keyframes moveleg2 {
-    0% {
-      transform: rotate(45deg);
-    }
-    50% {
-      transform: rotate(-45deg);
-    }
-    100% {
-      transform: rotate(45deg);
-    }
-  }
-
-  @keyframes movebody {
-    0% {
-      transform: translateX(0%);
-    }
-    50% {
-      transform: translateX(2%);
-    }
-    100% {
-      transform: translateX(0%);
-    }
-  }
-
-  .loaderline {
-    width: 50em;
-    height: 0.5em;
-    /* Ganti warna dashed line mengikuti tema agar terlihat jelas di Light & Dark mode */
-    border-top: 0.5em dashed ${props => props.theme === 'light' ? '#333' : 'var(--color2)'};
-    animation: moveline 10s linear infinite;
-  }
-
-  @keyframes moveline {
-    0% {
-      transform: translateX(0%);
-      opacity: 0%;
-    }
-    5% {
-      opacity: 100%;
-    }
-    95% {
-      opacity: 100%;
-    }
-    100% {
-      opacity: 0%;
-      transform: translateX(-70%);
+      width: 13ch;
     }
   }
 `;

@@ -195,7 +195,7 @@ body.light-mode .btn-p:hover { background: #1a1a1a; box-shadow: 0 12px 32px rgba
   transform: translateY(-2px);
   background: rgba(212,175,55,0.08);
 }
-body.light-mode .btn-s { color: rgba(10,10,10,0.8); border-color: rgba(0,0,0,0.15); }
+body.light-mode .btn-s { color: #0a0a0a !important; border-color: rgba(0,0,0,0.3) !important; }
 body.light-mode .btn-s:hover { border-color: #b8860b; color: #8b6508; background: rgba(184,134,11,0.08); }
 
 /* ========================================
