@@ -9,6 +9,7 @@ import {
   FiShield,
   FiArrowRight,
   FiArrowUpRight,
+  FiArrowUp,
   FiMail,
   FiCopy,
   FiCheck,
@@ -41,6 +42,11 @@ export default function App() {
 
   // 2. Active Section for Navigation (Scroll-spy on Desktop & Mobile!)
   const [activeNav, setActiveNav] = useState('about');
+
+  // Smart Navigation Auto-Hide on Scroll Down & Reveal on Scroll Up
+  const [navVisible, setNavVisible] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const lastScrollYRef = useRef(0);
 
   // 3. Hero Scrollytelling state (4 smooth scroll scenes) & Cycling Role
   const heroContainerRef = useRef(null);
@@ -84,11 +90,33 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Scroll-spy for Desktop & Mobile Navigation Pills
+  // Scroll-spy for Navigation Pills & Smart Auto-Hide + Back-to-Top Listener
   useEffect(() => {
     const sectionIds = ['about', 'experience', 'projects', 'certificates', 'contact'];
-    const handleSpy = () => {
-      const scrollPos = window.scrollY + window.innerHeight * 0.35;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Back to top button visibility (appears once scrolled past 320px)
+      setShowBackToTop(currentScrollY > 320);
+
+      // Smart auto-hide navigation on scroll down, reveal on scroll up
+      if (currentScrollY < 120) {
+        setNavVisible(true);
+      } else {
+        const delta = currentScrollY - lastScrollYRef.current;
+        if (delta > 8) {
+          // Scrolling DOWN -> Hide navigation to give maximum screen view!
+          setNavVisible(false);
+          setLangMenuOpen(false);
+        } else if (delta < -8) {
+          // Scrolling UP -> Reveal navigation smoothly so user can switch sections!
+          setNavVisible(true);
+        }
+      }
+      lastScrollYRef.current = currentScrollY;
+
+      // Section scroll-spy
+      const scrollPos = currentScrollY + window.innerHeight * 0.35;
       for (let i = sectionIds.length - 1; i >= 0; i--) {
         const el = document.getElementById(sectionIds[i]);
         if (el && el.offsetTop <= scrollPos) {
@@ -97,8 +125,9 @@ export default function App() {
         }
       }
     };
-    window.addEventListener('scroll', handleSpy, { passive: true });
-    return () => window.removeEventListener('scroll', handleSpy);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Dynamic Animated Favicon ("BK" logo color cycles live in the browser tab every second!)
@@ -298,8 +327,14 @@ export default function App() {
         aria-hidden="true"
       />
 
-      {/* 2A. MODERN FLOATING PILL TOP NAVBAR (Tactile, Interactive & Super Sleek on Desktop & Mobile!) */}
-      <header className="fixed top-2.5 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
+      {/* 2A. MODERN FLOATING PILL TOP NAVBAR (Auto-Hides on Scroll Down, Reveals on Scroll Up!) */}
+      <header
+        className={`fixed top-2.5 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none transition-all duration-300 ease-out ${
+          navVisible
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-16 opacity-0'
+        }`}
+      >
         <div className="max-w-5xl mx-auto h-11 sm:h-13 px-3 sm:px-4 rounded-2xl bg-[#090910]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.75)] flex items-center justify-between gap-2 pointer-events-auto">
           {/* Brand Name (Clean text, no blue dot!) */}
           <a
@@ -399,10 +434,14 @@ export default function App() {
         </div>
       </header>
 
-      {/* 2B. FLOATING GLASS DOCK FOR MOBILE (Ultra-Modern, Tactile & Easy-to-Tap App Dock!) */}
+      {/* 2B. FLOATING GLASS DOCK FOR MOBILE (Auto-Hides on Scroll Down to Free Up Screen Space!) */}
       <nav
         aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-2.5 inset-x-3 z-40 bg-[#090910]/90 backdrop-blur-2xl border border-white/12 rounded-2xl p-1 shadow-[0_14px_38px_rgba(0,0,0,0.9)] flex items-center justify-between gap-1"
+        className={`md:hidden fixed bottom-2.5 inset-x-3 z-40 bg-[#090910]/90 backdrop-blur-2xl border border-white/12 rounded-2xl p-1 shadow-[0_14px_38px_rgba(0,0,0,0.9)] flex items-center justify-between gap-1 transition-all duration-300 ease-out ${
+          navVisible
+            ? 'translate-y-0 opacity-100 pointer-events-auto'
+            : 'translate-y-16 opacity-0 pointer-events-none'
+        }`}
       >
         {navItems.map(({ id, href, label, Icon }) => {
           const isActive = activeNav === id;
@@ -1353,6 +1392,25 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* 11. MINIMALIST FLOATING BACK TO TOP BUTTON (Smooth, Tactile, Pure Luxury Dark Glass) */}
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Kembali ke atas"
+        title="Kembali ke atas"
+        className={`fixed z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#0c0c16]/90 backdrop-blur-xl border border-white/15 text-zinc-300 hover:text-white hover:border-indigo-500/40 hover:bg-indigo-600/25 shadow-[0_10px_30px_rgba(0,0,0,0.85)] flex items-center justify-center transition-all duration-300 active:scale-90 group cursor-pointer ${
+          showBackToTop
+            ? 'opacity-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 translate-y-6 pointer-events-none'
+        } ${
+          navVisible
+            ? 'bottom-16 sm:bottom-6 right-3.5 sm:right-6'
+            : 'bottom-3.5 sm:bottom-6 right-3.5 sm:right-6'
+        }`}
+      >
+        <FiArrowUp className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400 group-hover:text-white group-hover:-translate-y-0.5 transition-all" />
+      </button>
     </div>
   );
 }
