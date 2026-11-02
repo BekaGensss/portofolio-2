@@ -101,6 +101,46 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleSpy);
   }, []);
 
+  // Dynamic Animated Favicon ("BK" logo color cycles live in the browser tab every second!)
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = assetUrl('favicon.png');
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    let hueAngle = 0;
+    let intervalId;
+
+    let faviconLink = document.querySelector("link[rel*='icon']");
+    if (!faviconLink) {
+      faviconLink = document.createElement('link');
+      faviconLink.rel = 'shortcut icon';
+      faviconLink.type = 'image/png';
+      document.head.appendChild(faviconLink);
+    }
+
+    img.onload = () => {
+      const updateFavicon = () => {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, 64, 64);
+        ctx.filter = `hue-rotate(${hueAngle}deg) saturate(1.2)`;
+        ctx.drawImage(img, 0, 0, 64, 64);
+        faviconLink.href = canvas.toDataURL('image/png');
+        hueAngle = (hueAngle + 25) % 360;
+      };
+
+      updateFavicon();
+      intervalId = setInterval(updateFavicon, 1000);
+    };
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, []);
+
   // Glowing Cursor Ribbon Canvas
   useEffect(() => {
     const canvas = canvasRef.current;
