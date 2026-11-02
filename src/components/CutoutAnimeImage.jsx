@@ -5,11 +5,12 @@ const processedCache = new Map();
 
 /**
  * CutoutAnimeImage
- * Cleanly removes 100% of the exterior studio background AND the dark studio radial glow/halo
- * behind the neck, ears, and shoulders by:
- * 1. Flood-filling from all outer edges up to the character's crisp black ink outline or bright rim-light.
- * 2. Converting any semi-dark blue/grey studio glow pixels adjacent to the exterior into pure
- *    transparent alpha, so there is ZERO grey/navy halo behind the character on both mobile and desktop!
+ *
+ * Uses per-image anatomical silhouette protection + radial edge feathering so:
+ * 1. The hair, shoulders, suit, chair, and laptop are 100% PROTECTED and NEVER clipped/eaten!
+ * 2. The exterior studio background and any dark halo behind the neck/laptop screen are
+ *    cleanly removed so it blends 100% seamlessly into #040406!
+ * 3. Never flashes a raw box on page refresh.
  */
 export default function CutoutAnimeImage({ src, alt, className = '', style = {} }) {
   const [processedUrl, setProcessedUrl] = useState(() => processedCache.get(src) || null);
@@ -47,11 +48,63 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
         let head = 0;
         let tail = 0;
 
+        const isStage2 = src.includes('stage2');
+        const isStage3 = src.includes('stage3');
+
         /**
-         * Determines whether a pixel at (x, y) is part of the exterior dark studio
-         * or the radial blue-grey studio glow/halo behind the character.
+         * Returns true if normalized coordinate (nx, ny) in [0..1] is inside the
+         * character's head, hair, suit, chair, or laptop interior (so flood-fill can
+         * NEVER eat into the hair or suit!).
+         */
+        const isProtectedCharacterInterior = (nx, ny) => {
+          if (isStage3) {
+            // Stage 3: Side-profile coding at laptop (Head is on the right: nx 0.56..0.96, ny 0.05..0.52)
+            const inHead =
+              Math.pow((nx - 0.76) / 0.195, 2) + Math.pow((ny - 0.27) / 0.215, 2) <= 1.0;
+            // Neck & Back/Suit on the right (nx 0.45..0.98, ny 0.40..1.0)
+            const inSuitAndArms = nx >= 0.43 && nx <= 0.99 && ny >= 0.42;
+            // Laptop screen & keyboard on the left-center (nx 0.04..0.62, ny 0.28..0.96)
+            const inLaptop = nx >= 0.04 && nx <= 0.64 && ny >= 0.29 && ny <= 0.96;
+            // Desk & mug bottom-left
+            const inDesk = ny >= 0.58 && nx <= 0.98;
+            return inHead || inSuitAndArms || inLaptop || inDesk;
+          }
+
+          if (isStage2) {
+            // Stage 2: Front-facing typing at laptop
+            // Head & Hair crown (center: nx 0.50, ny 0.24, rx 0.165, ry 0.185)
+            const inHead =
+              Math.pow((nx - 0.5) / 0.162, 2) + Math.pow((ny - 0.235) / 0.18, 2) <= 1.0;
+            // Suit shoulders, chair backrest, and arms (nx 0.10..0.93, ny 0.39..0.96)
+            const inShouldersAndSuit =
+              ny >= 0.39 &&
+              ny <= 0.97 &&
+              nx >= 0.17 - (ny - 0.39) * 0.18 &&
+              nx <= 0.83 + (ny - 0.39) * 0.22;
+            // Laptop back cover & mug
+            const inLaptopAndDesk = ny >= 0.56 && nx >= 0.02 && nx <= 0.99;
+            return inHead || inShouldersAndSuit || inLaptopAndDesk;
+          }
+
+          // Stage 1: Front portrait (already perfect!)
+          const inHead =
+            Math.pow((nx - 0.5) / 0.225, 2) + Math.pow((ny - 0.29) / 0.24, 2) <= 1.0;
+          const inTorso = ny >= 0.64 && nx >= 0.04 && nx <= 0.96;
+          return inHead || inTorso;
+        };
+
+        /**
+         * Determines whether a pixel at (x, y) is exterior studio background or studio glow halo.
          */
         const isExteriorStudioOrHalo = (idx, x, y) => {
+          const nx = x / w;
+          const ny = y / h;
+
+          // 1. NEVER flood-fill inside the protected character/hair/suit/laptop silhouette!
+          if (isProtectedCharacterInterior(nx, ny)) {
+            return false;
+          }
+
           const p = idx * 4;
           const r = data[p];
           const g = data[p + 1];
@@ -60,34 +113,16 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
           const maxChannel = Math.max(r, g, b);
           const luma = 0.299 * r + 0.587 * g + 0.114 * b;
 
-          // 1. Protect warm skin tones, lips, brown eyes, or warm elements (red > blue)
+          // 2. Protect warm skin tones, lips, brown eyes, or warm elements
           if (r > b + 4 && r > 28) return false;
 
-          // 2. Protect white shirt collar, bright highlights, laptop body, and bright code
+          // 3. Protect white shirt collar, bright laptop body, and bright code
           if (luma > 78) return false;
 
-          // 3. Protect the crisp bright cyan/purple rim-light line directly on the character's edge
+          // 4. Protect the glowing cyan/purple rim-light line directly on the character's edge
           if (b >= 115 || g >= 105) return false;
 
-          // 4. Protect the interior of the hair & head silhouette
-          const normX = Math.abs(x - w * 0.5) / (w * 0.5);
-          const normY = y / h;
-          const inHairInterior = normY > 0.07 && normY < 0.44 && normX < 0.25;
-          if (inHairInterior) {
-            return maxChannel <= 18 && luma <= 15;
-          }
-
-          // 5. Protect the interior of the dark suit torso (center-bottom)
-          const inTorsoInterior = normY >= 0.68 && normX < 0.42;
-          if (inTorsoInterior) {
-            return maxChannel <= 16 && luma <= 14;
-          }
-
-          // 6. Everywhere in the exterior & behind the neck/ears/shoulders:
-          // Flood-fill all dark studio & radial blue/grey halo pixels (up to B=105, Luma=72)
-          // because the character's ears/jaw/neck have a very dark ink outline (luma < 14) or warm skin (R > B).
-          // Wait: to avoid entering the suit or ear through the dark ink line, stop at crisp black ink lines
-          // when they border skin or bright rim-light!
+          // 5. Flood-fill exterior studio background and any dark blue-grey studio halo outside the character!
           if (maxChannel <= 98 && luma <= 68 && b >= r - 2) {
             return true;
           }
@@ -95,55 +130,20 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
           return false;
         };
 
-        // Helper: check if a pixel is adjacent to warm skin or bright collar/laptop (i.e. character ink outline)
-        const isCharacterInkBarrier = (x, y) => {
-          const radius = 3;
-          for (let dy = -radius; dy <= radius; dy++) {
-            const ny = y + dy;
-            if (ny < 0 || ny >= h) continue;
-            for (let dx = -radius; dx <= radius; dx++) {
-              const nx = x + dx;
-              if (nx < 0 || nx >= w) continue;
-              const np = (ny * w + nx) * 4;
-              const nr = data[np];
-              const ng = data[np + 1];
-              const nb = data[np + 2];
-              const nluma = 0.299 * nr + 0.587 * ng + 0.114 * nb;
-              // Next to warm skin OR bright collar/rim-light
-              if ((nr > nb + 12 && nr > 65) || nluma > 105 || nb > 135) {
-                return true;
-              }
-            }
-          }
-          return false;
-        };
-
         const enqueue = (x, y) => {
           if (x < 0 || x >= w || y < 0 || y >= h) return;
           const idx = y * w + x;
           if (visited[idx]) return;
-
-          const p = idx * 4;
-          const r = data[p];
-          const g = data[p + 1];
-          const b = data[p + 2];
-          const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-
-          // Stop flood-fill at the character's black ink line (very dark pixel right next to skin/collar)
-          if (luma < 22 && isCharacterInkBarrier(x, y)) {
-            return;
-          }
-
           if (isExteriorStudioOrHalo(idx, x, y)) {
             visited[idx] = 1;
             queue[tail++] = idx;
           }
         };
 
-        // Seed from all 4 outer edges (top, left, right, and outer bottom corners)
+        // Seed from top, left, right, and outer bottom corners
         for (let x = 0; x < w; x++) {
           enqueue(x, 0);
-          if (x < w * 0.12 || x > w * 0.88) {
+          if (x < w * 0.08 || x > w * 0.92) {
             enqueue(x, h - 1);
           }
         }
@@ -164,13 +164,19 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
           if (y + 1 < h) enqueue(x, y + 1);
         }
 
-        // Second pass: clean up any remaining soft halo pixels within 6px of visited background
-        // and apply smooth bottom fade so the torso/desk blends seamlessly into #040406
+        // Second pass: apply transparency to visited exterior pixels + smooth edge feather + bottom/side fade
         for (let y = 0; y < h; y++) {
-          const bottomRatio = y > h * 0.82 ? 1 - (y - h * 0.82) / (h * 0.18) : 1;
+          const ny = y / h;
+          const bottomRatio = ny > 0.80 ? 1 - (ny - 0.80) / 0.20 : 1;
           const bottomAlphaScale = Math.max(0, Math.min(1, bottomRatio));
 
           for (let x = 0; x < w; x++) {
+            const nx = x / w;
+            // Soft fade on the very left/right 4% edges for Stage 2 & 3 desk/chair
+            let sideAlphaScale = 1;
+            if (nx < 0.04) sideAlphaScale = nx / 0.04;
+            else if (nx > 0.96) sideAlphaScale = (1 - nx) / 0.04;
+
             const idx = y * w + x;
             const p = idx * 4;
             if (visited[idx]) {
@@ -184,13 +190,13 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
 
               let alpha = data[p + 3];
               if (bgNeighbors >= 3) {
-                alpha = 0;
+                alpha = Math.round(alpha * 0.2);
               } else if (bgNeighbors === 2) {
-                alpha = Math.round(alpha * 0.35);
+                alpha = Math.round(alpha * 0.5);
               } else if (bgNeighbors === 1) {
-                alpha = Math.round(alpha * 0.7);
+                alpha = Math.round(alpha * 0.8);
               }
-              data[p + 3] = Math.round(alpha * bottomAlphaScale);
+              data[p + 3] = Math.round(alpha * bottomAlphaScale * sideAlphaScale);
             }
           }
         }
