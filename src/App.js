@@ -392,13 +392,13 @@ export default function App() {
 
       {/* =========================================================================
           3. SCROLL-TRIGGERED HERO SECTION
-             - Tight, close, responsive scroll distance on mobile (140vh so it smoothly transitions to About!)
-             - Extra-large anime characters with zero background boxes, compact unified spacing!
+             - Clean, fast, and responsive scroll height on mobile (190vh so it's close to About!)
+             - Perfectly placed text and large anime character without overlap on mobile screens!
          ========================================================================= */}
       <section
         id="top"
         ref={heroContainerRef}
-        className="relative h-[140vh] sm:h-[200vh] md:h-[300vh] w-full select-none"
+        className="relative h-[180vh] sm:h-[240vh] md:h-[320vh] w-full select-none"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#040406]">
           <div className="relative w-full max-w-6xl h-full mx-auto px-4 sm:px-6 flex items-center justify-center">
@@ -415,7 +415,7 @@ export default function App() {
                     : 'scale(1.1)',
               }}
             >
-              <div className="relative w-[345px] sm:w-[410px] md:w-[460px] h-[375px] sm:h-[460px] md:h-[530px] flex items-center justify-center pt-2 sm:pt-0">
+              <div className="relative w-[350px] sm:w-[410px] md:w-[460px] h-[375px] sm:h-[450px] md:h-[520px] flex items-center justify-center translate-y-3 md:translate-y-0">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage1.jpg')}
                   alt="Bara Kusuma — Anime Front Portrait"
@@ -426,18 +426,18 @@ export default function App() {
 
             {/* ================= VISUAL 3: BARA'S ANIME FACING FRONT TYPING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end pt-24 sm:pt-28 md:pt-0 md:pr-2 lg:pr-6 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end translate-y-24 sm:translate-y-28 md:translate-y-0 md:pr-2 lg:pr-6 pointer-events-none"
               style={{
                 opacity: stage === 3 ? 1 : 0,
                 transform:
                   stage === 3
-                    ? 'translateY(0px) scale(1)'
+                    ? 'scale(1)'
                     : stage < 3
                     ? 'translateY(24px) scale(0.95)'
                     : 'translateY(-16px) scale(0.95)',
               }}
             >
-              <div className="relative w-[350px] sm:w-[425px] md:w-[505px] lg:w-[555px] h-[335px] sm:h-[415px] md:h-[495px] flex items-center justify-center">
+              <div className="relative w-[360px] sm:w-[430px] md:w-[505px] lg:w-[550px] h-[345px] sm:h-[415px] md:h-[490px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage2.jpg')}
                   alt="Bara Kusuma — Anime Laptop Workspace"
@@ -448,16 +448,16 @@ export default function App() {
 
             {/* ================= VISUAL 4: BARA'S ANIME CODING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end pt-24 sm:pt-28 md:pt-0 md:pr-0 lg:pr-4 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end translate-y-24 sm:translate-y-28 md:translate-y-0 md:pr-0 lg:pr-4 pointer-events-none"
               style={{
                 opacity: stage === 4 ? 1 : 0,
                 transform:
                   stage === 4
-                    ? 'translateY(0px) scale(1)'
+                    ? 'scale(1)'
                     : 'translateY(24px) scale(0.95)',
               }}
             >
-              <div className="relative w-[360px] sm:w-[440px] md:w-[530px] lg:w-[580px] h-[345px] sm:h-[430px] md:h-[510px] flex items-center justify-center">
+              <div className="relative w-[370px] sm:w-[450px] md:w-[530px] lg:w-[580px] h-[355px] sm:h-[430px] md:h-[510px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage3.jpg')}
                   alt="Bara Kusuma — Anime Live Coding"
@@ -468,16 +468,16 @@ export default function App() {
 
             {/* ================= OVERLAY TEXT LAYER A: STAGE 1 ================= */}
             <div
-              className="stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-12 pb-14 sm:pt-16 sm:pb-16 md:py-24 pointer-events-none"
+              className="stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-20 pb-16 sm:py-24 pointer-events-none"
               style={{
                 opacity: stage === 1 ? 1 : 0,
                 transform: stage === 1 ? 'translateY(0px)' : 'translateY(-20px)',
               }}
             >
-              {/* Top Row: Role Title (Rapat di atas) */}
+              {/* Top Row: Role Title (Brought down closer to the anime head, perfectly spaced without overlap!) */}
               <div className="text-center md:text-left md:grid md:grid-cols-12 md:gap-6 items-start">
                 <div className="md:col-span-4 z-20">
-                  <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
                     <span
                       className="text-gradient-blue block transition-all duration-500"
                       style={{
@@ -492,17 +492,17 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Bottom Row: Introduction (Rapat di bawah anime dengan backdrop blur bersih) */}
+              {/* Bottom Row: Introduction (Brought closer to the anime suit/bottom, tight and unified!) */}
               <div className="md:grid md:grid-cols-12 md:gap-6 items-end pointer-events-auto">
                 <div className="hidden md:block md:col-span-8" />
-                <div className="md:col-span-4 md:pl-4 text-center md:text-left max-w-[340px] sm:max-w-md mx-auto md:mx-0 p-2.5 sm:p-0 rounded-2xl bg-[#040406]/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
-                  <div className="flex items-center justify-center md:justify-start gap-2 text-[9.5px] sm:text-xs font-mono uppercase tracking-widest text-indigo-400 md:text-zinc-500 mb-1">
+                <div className="md:col-span-4 md:pl-4 text-center md:text-left max-w-[340px] sm:max-w-md mx-auto md:mx-0 p-2 sm:p-0 rounded-2xl bg-[#040406]/85 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
+                  <div className="flex items-center justify-center md:justify-start gap-2 text-[9.5px] sm:text-xs font-mono uppercase tracking-widest text-indigo-400 md:text-zinc-500 mb-1 sm:mb-1.5">
                     <span>{t.hero.introLabel}</span>
                   </div>
-                  <h2 className="text-xs sm:text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug mb-1">
+                  <h2 className="text-xs sm:text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug mb-1 sm:mb-2">
                     {t.hero.introTitle}
                   </h2>
-                  <p className="text-[10px] sm:text-xs md:text-sm text-zinc-300 md:text-zinc-400 leading-relaxed">
+                  <p className="text-[10.5px] sm:text-xs md:text-sm text-zinc-300 md:text-zinc-400 leading-relaxed">
                     {t.hero.introDesc}
                   </p>
                 </div>
@@ -521,26 +521,26 @@ export default function App() {
 
             {/* ================= OVERLAY TEXT LAYER B: STAGE 3 & 4 ("HALO SAYA BARA KUSUMA") ================= */}
             <div
-              className="stage-layer absolute inset-x-4 sm:inset-x-6 top-12 sm:top-16 md:top-auto md:bottom-16 z-20 max-w-6xl mx-auto pointer-events-none"
+              className="stage-layer absolute inset-x-4 sm:inset-x-6 top-20 sm:top-24 md:top-auto md:bottom-16 z-20 max-w-6xl mx-auto pointer-events-none"
               style={{
                 opacity: stage === 3 || stage === 4 ? 1 : 0,
                 transform:
                   stage === 3 || stage === 4 ? 'translateY(0px)' : 'translateY(24px)',
               }}
             >
-              <div className="max-w-[330px] sm:max-w-md lg:max-w-lg mx-auto md:mx-0 text-center md:text-left pointer-events-auto p-2.5 sm:p-0 rounded-2xl bg-[#040406]/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
-                <p className="text-[11px] sm:text-2xl font-light tracking-[0.35em] text-white uppercase mb-0.5 sm:mb-1">
+              <div className="max-w-[340px] sm:max-w-md lg:max-w-lg mx-auto md:mx-0 text-center md:text-left pointer-events-auto p-3 sm:p-0 rounded-2xl bg-[#040406]/85 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
+                <p className="text-xs sm:text-2xl font-light tracking-[0.35em] text-white uppercase mb-0.5 sm:mb-1">
                   {t.hero.hello}
                 </p>
-                <h2 className="text-xl sm:text-4xl font-extrabold tracking-wide text-gradient-blue uppercase mb-1 sm:mb-2.5">
+                <h2 className="text-xl sm:text-4xl font-extrabold tracking-wide text-gradient-blue uppercase mb-1.5 sm:mb-2.5">
                   {t.hero.imName}
                 </h2>
-                <p className="text-[10.5px] sm:text-sm text-zinc-300 leading-relaxed mb-2.5 sm:mb-5">
+                <p className="text-[11px] sm:text-sm text-zinc-300 leading-relaxed mb-3 sm:mb-5">
                   {t.hero.stage4Bio}
                 </p>
                 <a
                   href="#experience"
-                  className="inline-flex items-center gap-2 px-4 sm:px-5 py-1.5 sm:py-2.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-[10.5px] sm:text-xs font-medium text-white transition-all group active:scale-95"
+                  className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/[0.08] hover:bg-white/[0.14] border border-white/20 text-[11px] sm:text-xs font-medium text-white transition-all group active:scale-95"
                 >
                   <span>{t.hero.viewExp}</span>
                   <FiArrowRight className="w-3.5 h-3.5 text-zinc-400 group-hover:translate-x-1 group-hover:text-white transition-all" />
