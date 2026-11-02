@@ -402,21 +402,6 @@ export default function App() {
         className="relative h-[300vh] sm:h-[320vh] w-full select-none"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#040406]">
-          {/* Subtle Ambient Studio Spotlight */}
-          <div
-            className="absolute w-[240px] sm:w-[500px] h-[240px] sm:h-[500px] rounded-full bg-indigo-600/10 blur-[115px] pointer-events-none transition-all duration-700"
-            style={{
-              transform:
-                stage === 1
-                  ? 'translate(0px, 0px)'
-                  : stage === 2
-                  ? 'translate(-20px, -15px)'
-                  : stage === 3
-                  ? 'translate(80px, 15px)'
-                  : 'translate(110px, 10px)',
-            }}
-          />
-
           <div className="relative w-full max-w-6xl h-full mx-auto px-4 sm:px-6 flex items-center justify-center">
             {/* ================= VISUAL 1 & 2: BARA'S ANIME FRONT PORTRAIT (CLEAN BACKGROUND, ZERO HALO!) ================= */}
             <div
@@ -431,18 +416,18 @@ export default function App() {
                     : 'scale(1.12)',
               }}
             >
-              <div className="relative w-[200px] sm:w-[350px] md:w-[420px] h-[245px] sm:h-[430px] md:h-[500px] flex items-center justify-center">
+              <div className="relative w-[305px] sm:w-[370px] md:w-[435px] h-[345px] sm:h-[440px] md:h-[515px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage1.jpg')}
                   alt="Bara Kusuma — Anime Front Portrait"
-                  className="w-full h-full object-contain drop-shadow-[0_20px_42px_rgba(0,0,0,0.92)]"
+                  className="w-full h-full object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.95)]"
                 />
               </div>
             </div>
 
             {/* ================= VISUAL 3: BARA'S ANIME FACING FRONT TYPING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-end md:items-center justify-center md:justify-end pb-16 md:pb-0 md:pr-2 lg:pr-6 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-end md:items-center justify-center md:justify-end pb-14 md:pb-0 md:pr-2 lg:pr-6 pointer-events-none"
               style={{
                 opacity: stage === 3 ? 1 : 0,
                 transform:
@@ -453,18 +438,18 @@ export default function App() {
                     : 'translateY(-16px) scale(0.95)',
               }}
             >
-              <div className="relative w-[230px] sm:w-[390px] md:w-[480px] lg:w-[530px] h-[230px] sm:h-[390px] md:h-[470px] flex items-center justify-center">
+              <div className="relative w-[325px] sm:w-[410px] md:w-[495px] lg:w-[545px] h-[325px] sm:h-[405px] md:h-[485px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage2.jpg')}
                   alt="Bara Kusuma — Anime Laptop Workspace"
-                  className="w-full h-full object-contain drop-shadow-[0_22px_50px_rgba(59,130,246,0.2)]"
+                  className="w-full h-full object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)]"
                 />
               </div>
             </div>
 
             {/* ================= VISUAL 4: BARA'S ANIME CODING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-end md:items-center justify-center md:justify-end pb-16 md:pb-0 md:pr-0 lg:pr-4 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-end md:items-center justify-center md:justify-end pb-14 md:pb-0 md:pr-0 lg:pr-4 pointer-events-none"
               style={{
                 opacity: stage === 4 ? 1 : 0,
                 transform:
@@ -473,27 +458,27 @@ export default function App() {
                     : 'translateY(24px) scale(0.95)',
               }}
             >
-              <div className="relative w-[240px] sm:w-[410px] md:w-[510px] lg:w-[560px] h-[235px] sm:h-[400px] md:h-[490px] flex items-center justify-center">
+              <div className="relative w-[335px] sm:w-[430px] md:w-[520px] lg:w-[575px] h-[335px] sm:h-[420px] md:h-[505px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage3.jpg')}
                   alt="Bara Kusuma — Anime Live Coding"
-                  className="w-full h-full object-contain drop-shadow-[0_22px_55px_rgba(99,102,241,0.24)]"
+                  className="w-full h-full object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)]"
                 />
               </div>
             </div>
 
             {/* ================= OVERLAY TEXT LAYER A: STAGE 1 (COMPACT & BALANCED ON MOBILE & DESKTOP) ================= */}
             <div
-              className="stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-16 pb-16 sm:py-24 pointer-events-none"
+              className="stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-14 pb-16 sm:py-24 pointer-events-none"
               style={{
                 opacity: stage === 1 ? 1 : 0,
                 transform: stage === 1 ? 'translateY(0px)' : 'translateY(-20px)',
               }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-6 items-center my-auto h-full md:h-auto content-between md:content-center">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-1.5 sm:gap-6 items-center my-auto h-full md:h-auto content-between md:content-center">
                 {/* Top/Left Column: Role Title */}
                 <div className="md:col-span-4 z-20 text-center md:text-left pt-1 md:pt-0">
-                  <h1 className="text-2xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
+                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
                     <span
                       className="text-gradient-blue block transition-all duration-500"
                       style={{
@@ -508,10 +493,10 @@ export default function App() {
                 </div>
 
                 {/* Center Spacer for Anime Portrait */}
-                <div className="h-[180px] sm:h-[250px] md:h-auto md:col-span-4" />
+                <div className="h-[255px] sm:h-[290px] md:h-auto md:col-span-4" />
 
                 {/* Bottom/Right Column: Introduction */}
-                <div className="md:col-span-4 md:pl-4 pointer-events-auto z-20 text-center md:text-left max-w-[290px] sm:max-w-md mx-auto md:mx-0">
+                <div className="md:col-span-4 md:pl-4 pointer-events-auto z-20 text-center md:text-left max-w-[310px] sm:max-w-md mx-auto md:mx-0">
                   <div className="flex items-center justify-center md:justify-start gap-2 text-[9.5px] sm:text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1 sm:mb-2">
                     <span>{t.hero.introLabel}</span>
                   </div>
@@ -583,8 +568,8 @@ export default function App() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-start">
-          {/* Left Column: Real Photo Profile Card (Compact horizontal/card proportion on mobile!) */}
-          <div className="lg:col-span-4 matte-card rounded-2xl p-3.5 sm:p-5 max-w-[310px] sm:max-w-sm mx-auto lg:max-w-none w-full">
+          {/* Left Column: Real Photo Profile Card (Full-width & clear on mobile!) */}
+          <div className="lg:col-span-4 matte-card rounded-2xl p-4 sm:p-5 max-w-[355px] sm:max-w-sm mx-auto lg:max-w-none w-full">
             <div
               onClick={() => setProfileColorActive((v) => !v)}
               className="relative w-full aspect-[4/4.1] rounded-xl overflow-hidden mb-3 sm:mb-4 bg-gradient-to-b from-indigo-950/50 to-zinc-950 border border-white/10 group cursor-pointer"
