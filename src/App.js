@@ -392,17 +392,17 @@ export default function App() {
 
       {/* =========================================================================
           3. SCROLL-TRIGGERED HERO SECTION
-             - Cleanly removes 100% of exterior studio & dark vignette circle behind the neck
-               using `CutoutAnimeImage` so the character blends seamlessly into #040406!
+             - Clean, fast, and responsive scroll height on mobile (190vh so it's close to About!)
+             - Perfectly placed text and large anime character without overlap on mobile screens!
          ========================================================================= */}
       <section
         id="top"
         ref={heroContainerRef}
-        className="relative h-[300vh] sm:h-[320vh] w-full select-none"
+        className="relative h-[180vh] sm:h-[240vh] md:h-[320vh] w-full select-none"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#040406]">
           <div className="relative w-full max-w-6xl h-full mx-auto px-4 sm:px-6 flex items-center justify-center">
-            {/* ================= VISUAL 1 & 2: BARA'S ANIME FRONT PORTRAIT (CLEAN BACKGROUND, ZERO HALO!) ================= */}
+            {/* ================= VISUAL 1 & 2: BARA'S ANIME FRONT PORTRAIT ================= */}
             <div
               className="stage-layer absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{
@@ -411,11 +411,11 @@ export default function App() {
                   stage === 1
                     ? 'scale(1)'
                     : stage === 2
-                    ? 'scale(1.06)'
-                    : 'scale(1.12)',
+                    ? 'scale(1.05)'
+                    : 'scale(1.1)',
               }}
             >
-              <div className="relative w-[290px] sm:w-[370px] md:w-[435px] h-[325px] sm:h-[440px] md:h-[515px] flex items-center justify-center">
+              <div className="relative w-[320px] sm:w-[380px] md:w-[440px] h-[340px] sm:h-[440px] md:h-[515px] flex items-center justify-center pt-2 sm:pt-0">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage1.jpg')}
                   alt="Bara Kusuma — Anime Front Portrait"
@@ -426,7 +426,7 @@ export default function App() {
 
             {/* ================= VISUAL 3: BARA'S ANIME FACING FRONT TYPING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end pt-36 sm:pt-40 md:pt-0 md:pr-2 lg:pr-6 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-end md:items-center justify-center md:justify-end pb-16 sm:pb-20 md:pb-0 md:pr-2 lg:pr-6 pointer-events-none"
               style={{
                 opacity: stage === 3 ? 1 : 0,
                 transform:
@@ -437,7 +437,7 @@ export default function App() {
                     : 'translateY(-16px) scale(0.95)',
               }}
             >
-              <div className="relative w-[315px] sm:w-[410px] md:w-[495px] lg:w-[545px] h-[315px] sm:h-[405px] md:h-[485px] flex items-center justify-center">
+              <div className="relative w-[335px] sm:w-[410px] md:w-[495px] lg:w-[545px] h-[310px] sm:h-[405px] md:h-[485px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage2.jpg')}
                   alt="Bara Kusuma — Anime Laptop Workspace"
@@ -448,7 +448,7 @@ export default function App() {
 
             {/* ================= VISUAL 4: BARA'S ANIME CODING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end pt-36 sm:pt-40 md:pt-0 md:pr-0 lg:pr-4 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-end md:items-center justify-center md:justify-end pb-16 sm:pb-20 md:pb-0 md:pr-0 lg:pr-4 pointer-events-none"
               style={{
                 opacity: stage === 4 ? 1 : 0,
                 transform:
@@ -457,7 +457,7 @@ export default function App() {
                     : 'translateY(24px) scale(0.95)',
               }}
             >
-              <div className="relative w-[325px] sm:w-[430px] md:w-[520px] lg:w-[575px] h-[325px] sm:h-[420px] md:h-[505px] flex items-center justify-center">
+              <div className="relative w-[345px] sm:w-[430px] md:w-[520px] lg:w-[575px] h-[320px] sm:h-[420px] md:h-[505px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage3.jpg')}
                   alt="Bara Kusuma — Anime Live Coding"
@@ -466,18 +466,18 @@ export default function App() {
               </div>
             </div>
 
-            {/* ================= OVERLAY TEXT LAYER A: STAGE 1 (COMPACT & BALANCED ON MOBILE & DESKTOP) ================= */}
+            {/* ================= OVERLAY TEXT LAYER A: STAGE 1 ================= */}
             <div
-              className="stage-layer relative z-20 w-full h-full flex flex-col justify-center sm:justify-between pt-14 pb-16 sm:py-24 pointer-events-none"
+              className="stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-14 pb-14 sm:pt-16 sm:pb-16 md:py-24 pointer-events-none"
               style={{
                 opacity: stage === 1 ? 1 : 0,
                 transform: stage === 1 ? 'translateY(0px)' : 'translateY(-20px)',
               }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-6 items-center my-auto content-center">
-                {/* Top/Left Column: Role Title */}
-                <div className="md:col-span-4 z-20 text-center md:text-left">
-                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
+              {/* Top Row: Role Title (Pushed high up near top on mobile so it never overlaps anime!) */}
+              <div className="text-center md:text-left md:grid md:grid-cols-12 md:gap-6 items-start">
+                <div className="md:col-span-4 z-20">
+                  <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
                     <span
                       className="text-gradient-blue block transition-all duration-500"
                       style={{
@@ -490,19 +490,19 @@ export default function App() {
                     <span className="text-white block">{t.hero.developer}</span>
                   </h1>
                 </div>
+              </div>
 
-                {/* Center Spacer for Anime Portrait */}
-                <div className="h-[245px] sm:h-[290px] md:h-auto md:col-span-4" />
-
-                {/* Bottom/Right Column: Introduction */}
-                <div className="md:col-span-4 md:pl-4 pointer-events-auto z-20 text-center md:text-left max-w-[310px] sm:max-w-md mx-auto md:mx-0">
-                  <div className="flex items-center justify-center md:justify-start gap-2 text-[9.5px] sm:text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1 sm:mb-2">
+              {/* Bottom Row: Introduction (Positioned at bottom on mobile with crisp backdrop so it is 100% visible and not blocked by anime!) */}
+              <div className="md:grid md:grid-cols-12 md:gap-6 items-end pointer-events-auto">
+                <div className="hidden md:block md:col-span-8" />
+                <div className="md:col-span-4 md:pl-4 text-center md:text-left max-w-[340px] sm:max-w-md mx-auto md:mx-0 p-2 sm:p-0 rounded-2xl bg-[#040406]/75 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.06] md:border-0 shadow-lg md:shadow-none">
+                  <div className="flex items-center justify-center md:justify-start gap-2 text-[9.5px] sm:text-xs font-mono uppercase tracking-widest text-indigo-400 md:text-zinc-500 mb-1 sm:mb-1.5">
                     <span>{t.hero.introLabel}</span>
                   </div>
-                  <h2 className="text-xs sm:text-xl lg:text-2xl font-bold text-white leading-snug mb-1 sm:mb-2.5">
+                  <h2 className="text-xs sm:text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug mb-1 sm:mb-2">
                     {t.hero.introTitle}
                   </h2>
-                  <p className="text-[10.5px] sm:text-sm text-zinc-400 leading-relaxed">
+                  <p className="text-[10px] sm:text-xs md:text-sm text-zinc-300 md:text-zinc-400 leading-relaxed">
                     {t.hero.introDesc}
                   </p>
                 </div>
@@ -521,21 +521,21 @@ export default function App() {
 
             {/* ================= OVERLAY TEXT LAYER B: STAGE 3 & 4 ("HALO SAYA BARA KUSUMA") ================= */}
             <div
-              className="stage-layer absolute inset-x-4 sm:inset-x-6 top-[13%] sm:top-[15%] md:top-auto md:bottom-16 z-20 max-w-6xl mx-auto pointer-events-none"
+              className="stage-layer absolute inset-x-4 sm:inset-x-6 top-16 sm:top-20 md:top-auto md:bottom-16 z-20 max-w-6xl mx-auto pointer-events-none"
               style={{
                 opacity: stage === 3 || stage === 4 ? 1 : 0,
                 transform:
                   stage === 3 || stage === 4 ? 'translateY(0px)' : 'translateY(24px)',
               }}
             >
-              <div className="max-w-[310px] sm:max-w-md lg:max-w-lg mx-auto md:mx-0 text-center md:text-left pointer-events-auto">
+              <div className="max-w-[320px] sm:max-w-md lg:max-w-lg mx-auto md:mx-0 text-center md:text-left pointer-events-auto p-2 sm:p-0 rounded-2xl bg-[#040406]/75 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.06] md:border-0">
                 <p className="text-[11px] sm:text-2xl font-light tracking-[0.35em] text-white uppercase mb-0.5 sm:mb-1">
                   {t.hero.hello}
                 </p>
-                <h2 className="text-xl sm:text-4xl font-extrabold tracking-wide text-gradient-blue uppercase mb-1.5 sm:mb-3.5">
+                <h2 className="text-xl sm:text-4xl font-extrabold tracking-wide text-gradient-blue uppercase mb-1.5 sm:mb-2.5">
                   {t.hero.imName}
                 </h2>
-                <p className="text-[11px] sm:text-sm text-zinc-300 leading-relaxed mb-3 sm:mb-6">
+                <p className="text-[11px] sm:text-sm text-zinc-300 leading-relaxed mb-3 sm:mb-5">
                   {t.hero.stage4Bio}
                 </p>
                 <a
@@ -556,7 +556,7 @@ export default function App() {
              - Real Profile Photo: starts grayscale, turns full original color on hover or tap!
              - Super compact & balanced layout on mobile (2-column skills grid so it's never long)!
          ========================================================================= */}
-      <section id="about" className="relative py-12 sm:py-24 px-3.5 sm:px-6 max-w-6xl mx-auto">
+      <section id="about" className="relative pt-4 pb-12 sm:py-24 px-3.5 sm:px-6 max-w-6xl mx-auto">
         <div className="mb-5 sm:mb-10">
           <span className="text-[9.5px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-indigo-400 block mb-1">
             {t.about.tag}
