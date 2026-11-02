@@ -74,23 +74,27 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
             // Stage 2: Front-facing typing at laptop
             // Head & Hair crown (center: nx 0.50, ny 0.24, rx 0.165, ry 0.185)
             const inHead =
-              Math.pow((nx - 0.5) / 0.162, 2) + Math.pow((ny - 0.235) / 0.18, 2) <= 1.0;
-            // Suit shoulders, chair backrest, and arms (nx 0.10..0.93, ny 0.39..0.96)
+              Math.pow((nx - 0.5) / 0.165, 2) + Math.pow((ny - 0.235) / 0.185, 2) <= 1.0;
+            // Suit shoulders, chair backrest, and arms
             const inShouldersAndSuit =
-              ny >= 0.39 &&
-              ny <= 0.97 &&
-              nx >= 0.17 - (ny - 0.39) * 0.18 &&
-              nx <= 0.83 + (ny - 0.39) * 0.22;
+              ny >= 0.38 &&
+              ny <= 0.98 &&
+              nx >= 0.16 - (ny - 0.38) * 0.16 &&
+              nx <= 0.84 + (ny - 0.38) * 0.20;
             // Laptop back cover & mug
             const inLaptopAndDesk = ny >= 0.56 && nx >= 0.02 && nx <= 0.99;
             return inHead || inShouldersAndSuit || inLaptopAndDesk;
           }
 
-          // Stage 1: Front portrait (already perfect!)
+          // Stage 1: Front portrait
+          // Head & hair crown
           const inHead =
-            Math.pow((nx - 0.5) / 0.225, 2) + Math.pow((ny - 0.29) / 0.24, 2) <= 1.0;
-          const inTorso = ny >= 0.64 && nx >= 0.04 && nx <= 0.96;
-          return inHead || inTorso;
+            Math.pow((nx - 0.5) / 0.225, 2) + Math.pow((ny - 0.28) / 0.235, 2) <= 1.0;
+          // Suit shoulders taper down from collar to corners (NO rigid rectangle!)
+          const inSuit =
+            ny >= 0.58 &&
+            Math.abs(nx - 0.5) <= 0.16 + (ny - 0.58) * 0.95;
+          return inHead || inSuit;
         };
 
         /**
