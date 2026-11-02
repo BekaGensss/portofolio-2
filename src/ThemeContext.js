@@ -2,8 +2,17 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+export const fonts = {
+    display: 'Outfit, sans-serif',
+    body: "'Plus Jakarta Sans', 'Inter', sans-serif",
+    mono: "'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace",
+};
+
 export const themes = {
     dark: {
+        panel: 'rgba(10,10,10,0.74)',
+        panelStrong: 'rgba(12,12,12,0.92)',
+        hairline: 'rgba(255,255,255,0.12)',
         bg: '#050505',
         bgAlt: '#0d0d0d',
         bgCard: 'rgba(255,255,255,0.03)',
@@ -34,6 +43,9 @@ export const themes = {
         headingDim: 'rgba(255,255,255,0.12)',
     },
     light: {
+        panel: 'rgba(255,255,255,0.8)',
+        panelStrong: 'rgba(255,255,255,0.95)',
+        hairline: 'rgba(0,0,0,0.14)',
         bg: '#faf9f6',
         bgAlt: '#ffffff',
         bgCard: 'rgba(255,255,255,0.9)',

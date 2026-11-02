@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHome, FiUser, FiBriefcase, FiGithub, FiAward, FiMail, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiUser, FiBriefcase, FiGithub, FiAward, FiMail, FiMenu, FiX, FiBookOpen, FiLayers } from 'react-icons/fi';
 import { useTheme } from '../ThemeContext';
 import ThemeSwitch from './ThemeSwitch';
 import LangSwitch from './LangSwitch';
@@ -8,6 +8,8 @@ import LangSwitch from './LangSwitch';
 const getLinks = (lang) => [
     { href: '#home',         icon: FiHome,      label: lang === 'ID' ? 'Beranda' : 'Home'         },
     { href: '#about',        icon: FiUser,      label: lang === 'ID' ? 'Tentang' : 'About'        },
+    { href: '#experience',   icon: FiBookOpen,  label: lang === 'ID' ? 'Pengalaman' : 'Experience' },
+    { href: '#cases',        icon: FiLayers,    label: lang === 'ID' ? 'Studi Kasus' : 'Case Studies' },
     { href: '#projects',     icon: FiBriefcase, label: lang === 'ID' ? 'Proyek' : 'Projects'     },
     { href: '#github',       icon: FiGithub,    label: 'GitHub'       },
     { href: '#certificates', icon: FiAward,     label: lang === 'ID' ? 'Sertifikasi' : 'Certificates' },
@@ -26,7 +28,7 @@ const Navbar = () => {
     const [open, setOpen]       = useState(false);
 
     useEffect(() => {
-        const ids = ['home', 'about', 'projects', 'github', 'certificates', 'contact'];
+        const ids = ['home', 'about', 'experience', 'cases', 'projects', 'github', 'certificates', 'contact'];
         const onScroll = () => {
             ids.forEach(id => {
                 const el = document.getElementById(id);

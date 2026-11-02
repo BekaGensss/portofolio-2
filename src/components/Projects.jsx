@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiGithub, FiArrowUpRight, FiX } from 'react-icons/fi';
 import { useTheme } from '../ThemeContext';
-import { SectionHeading } from './About';
+import { Section, SectionHeader } from './ui';
 
 import project1Image1 from '../assets/project1-gambar1.png';
 import project1Image2 from '../assets/project1-gambar2.png';
@@ -11,15 +11,8 @@ import project2Image2 from '../assets/project2-gambar2.png';
 import project3Image1 from '../assets/project3-gambar1.png';
 import project3Image2 from '../assets/project3-gambar2.png';
 
-const tagColorsDark = {
-    PHP:        { bg:'rgba(119,123,180,0.12)', t:'#a5b4fc', b:'rgba(119,123,180,0.2)' },
-    CSS:        { bg:'rgba(34,211,238,0.1)',   t:'#67e8f9', b:'rgba(34,211,238,0.2)'  },
-    Laravel:    { bg:'rgba(255,45,32,0.1)',    t:'#fca5a5', b:'rgba(255,45,32,0.18)'  },
-    Python:     { bg:'rgba(52,175,215,0.1)',   t:'#93c5fd', b:'rgba(52,175,215,0.2)'  },
-    HTML:       { bg:'rgba(227,79,38,0.1)',    t:'#fdba74', b:'rgba(227,79,38,0.2)'   },
-    JavaScript: { bg:'rgba(247,223,30,0.1)',   t:'#fde68a', b:'rgba(247,223,30,0.18)' },
-    React:      { bg:'rgba(34,211,238,0.1)',   t:'#a5f3fc', b:'rgba(34,211,238,0.2)'  },
-};
+/* Semua tag memakai satu gaya (emas) supaya warna tetap selaras dengan tema */
+const tagColorsDark = {};
 
 const projects = [
     {
@@ -89,7 +82,7 @@ const Modal = ({ project, onClose, isDark, theme }) => {
                         background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%)',
                     }} />
                     {/* Top accent line */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg,${project.accent},transparent)` }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg,#d4af37,transparent)' }} />
                     {/* Dots */}
                     {project.images.length > 1 && (
                         <div style={{ position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
@@ -140,22 +133,14 @@ const Projects = () => {
     const [hov, setHov] = useState(null);
 
     return (
-        <section id="projects" style={{ padding: 'clamp(64px,10vh,100px) 0', position: 'relative' }}>
-            <div className="hdiv" />
-            <div style={{ maxWidth: 1200, margin: '0 auto', padding: 'clamp(40px,6vh,72px) clamp(16px,4vw,40px) 0' }}>
-
-                {/* Header */}
-                <motion.div initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }} viewport={{ once: true }}>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 11, color: theme.textMuted, letterSpacing: 3, textTransform: 'uppercase' }}>// {lang === 'ID' ? 'PROYEK SAYA' : 'MY PROJECTS'}</span>
-                    <SectionHeading solid={lang === 'ID' ? 'PROYEK' : 'MY'} outline={lang === 'ID' ? 'SAYA.' : 'WORK.'} theme={theme} isDark={isDark} />
-                    <p style={{
-                        fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
-                        fontSize: 'clamp(14px,1.5vw,16px)',
-                        color: theme.textSecondary, maxWidth: 400, marginTop: 10,
-                    }}>
-                        {lang === 'ID' ? 'Proyek yang mencerminkan cara saya berpikir dan bekerja.' : 'Projects that reflect how I think and work.'}
-                    </p>
-                </motion.div>
+        <Section id="projects">
+            <div>
+                <SectionHeader
+                    index="04" label={lang === 'ID' ? 'Proyek' : 'Projects'}
+                    solid={lang === 'ID' ? 'PROYEK' : 'MY'} outline={lang === 'ID' ? 'SAYA.' : 'WORK.'}
+                    desc={lang === 'ID' ? 'Proyek yang mencerminkan cara saya berpikir dan bekerja.' : 'Projects that reflect how I think and work.'}
+                    theme={theme} isDark={isDark}
+                />
 
                 {/* Numbered list */}
                 <div>
@@ -288,7 +273,7 @@ const Projects = () => {
             <AnimatePresence>
                 {sel && <Modal project={sel} onClose={() => setSel(null)} isDark={isDark} theme={theme} />}
             </AnimatePresence>
-        </section>
+        </Section>
     );
 };
 

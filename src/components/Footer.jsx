@@ -6,6 +6,8 @@ import { useTheme } from '../ThemeContext';
 const getNavLinks = (lang) => [
     { href:'#home',         label: lang === 'ID' ? 'Beranda' : 'Home'      },
     { href:'#about',        label: lang === 'ID' ? 'Tentang' : 'About'      },
+    { href:'#experience',   label: lang === 'ID' ? 'Pengalaman' : 'Experience' },
+    { href:'#cases',        label: lang === 'ID' ? 'Studi Kasus' : 'Case Studies' },
     { href:'#projects',     label: lang === 'ID' ? 'Proyek' : 'Projects'       },
     { href:'#certificates', label: lang === 'ID' ? 'Sertifikasi' : 'Certificates'  },
     { href:'#contact',      label: lang === 'ID' ? 'Kontak' : 'Contact'       },
@@ -27,8 +29,8 @@ const Footer = () => {
     };
 
     const infoItems = [
-        { icon: FiMapPin,      label: lang === 'ID' ? 'Lokasi' : 'Location',     val:'Indonesia'       },
-        { icon: FiBriefcase,   label: lang === 'ID' ? 'Pengalaman' : 'Experience', val: lang === 'ID' ? '2+ Tahun' : '2+ Years'        },
+        { icon: FiMapPin,      label: lang === 'ID' ? 'Lokasi' : 'Location',     val:'Jakarta Barat, Indonesia' },
+        { icon: FiBriefcase,   label: lang === 'ID' ? 'Pendidikan' : 'Education', val: lang === 'ID' ? 'S1 Informatika · IPK 3.81' : 'B.Sc. Informatics · GPA 3.81' },
     ];
 
     return (
@@ -116,7 +118,7 @@ const Footer = () => {
                                     color:theme.textSecondary, marginTop:10, maxWidth:300,
                                     lineHeight:1.75,
                                 }}>
-                                    {lang === 'ID' ? 'Mengubah ide menjadi pengalaman digital yang berkesan melalui kode yang bersih dan desain elegan.' : 'Turning ideas into memorable digital experiences through clean code and elegant design.'}
+                                    {lang === 'ID' ? 'Lulusan Sarjana Informatika dengan pengalaman IT Support, jaringan komputer, dan pengembangan web.' : 'Informatics graduate with experience in IT Support, computer networking, and web development.'}
                                 </p>
                             </div>
 
@@ -125,7 +127,7 @@ const Footer = () => {
                                 {[
                                     { href:'https://github.com/BekaGensss',  icon:<FiGithub size={16}/>,   label:'GitHub'   },
                                     { href:'https://id.linkedin.com/in/bara-kusuma-707067294', icon:<FiLinkedin size={16}/>, label:'LinkedIn' },
-                                    { href:'mailto:barakusuma911@gmail.com', icon:<FiMail size={16}/>,     label:'Email'    },
+                                    { href:'mailto:stenkrama@gmail.com', icon:<FiMail size={16}/>,     label:'Email'    },
                                 ].map(s => (
                                     <a key={s.label} href={s.href}
                                         target={s.href.startsWith('http') ? '_blank' : undefined}
@@ -179,7 +181,7 @@ const Footer = () => {
                                 marginBottom:18,
                                 display:'flex', alignItems:'center', gap:6,
                             }}>
-                                <span style={{ opacity:0.5 }}>//</span> {lang === 'ID' ? 'NAVIGASI' : 'NAVIGATION'}
+                                <span style={{ opacity:0.5 }}>{'//'}</span> {lang === 'ID' ? 'NAVIGASI' : 'NAVIGATION'}
                             </div>
                             <nav style={{ display:'flex', flexDirection:'column', gap:4 }}>
                                 {getNavLinks(lang).map(l => (
@@ -217,7 +219,7 @@ const Footer = () => {
                                 marginBottom:18,
                                 display:'flex', alignItems:'center', gap:6,
                             }}>
-                                <span style={{ opacity:0.5 }}>//</span> INFO
+                                <span style={{ opacity:0.5 }}>{'//'}</span> INFO
                             </div>
                             <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
                                 {infoItems.map((item, i) => {
@@ -249,7 +251,7 @@ const Footer = () => {
                                     fontFamily:'monospace', fontSize:13,
                                     color:'#d4af37', fontWeight:700,
                                 }}>
-                                    {'</>'} Full Stack Developer
+                                    {'</>'} Network & IT Support
                                 </div>
                             </div>
                         </div>
