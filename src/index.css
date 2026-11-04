@@ -92,9 +92,3 @@ body {
   transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
-
-/* Seamless edge & bottom feather mask so dark-studio anime art blends 100% into #040406 without any box or pixel cutting! */
-.anime-studio-blend {
-  -webkit-mask-image: radial-gradient(ellipse 84% 84% at 50% 44%, #000 56%, rgba(0, 0, 0, 0.7) 75%, transparent 98%);
-  mask-image: radial-gradient(ellipse 84% 84% at 50% 44%, #000 56%, rgba(0, 0, 0, 0.7) 75%, transparent 98%);
-}

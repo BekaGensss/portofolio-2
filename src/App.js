@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   FiGlobe,
   FiChevronDown,
@@ -24,6 +24,7 @@ import {
   FiUser,
   FiBriefcase,
   FiFolder,
+  FiHome,
 } from 'react-icons/fi';
 import { LANGUAGES, getTranslation } from './data/i18n';
 import CutoutAnimeImage from './components/CutoutAnimeImage';
@@ -31,17 +32,23 @@ import CutoutAnimeImage from './components/CutoutAnimeImage';
 const EMAIL = 'stenkrama@gmail.com';
 const LINKEDIN_URL = 'https://id.linkedin.com/in/bara-kusuma-707067294';
 const GITHUB_URL = 'https://github.com/BekaGensss';
+const GITHUB_REPOS_URL = 'https://github.com/BekaGensss?tab=repositories';
 const assetUrl = (path) => `${process.env.PUBLIC_URL || ''}/${path}`;
 
 export default function App() {
   // 1. Language state (8 Languages: ID, EN, JA, KO, ZH, AR, ES, DE)
   const [lang, setLang] = useState(() => {
-    return localStorage.getItem('bk-lang') || 'ID';
+    try {
+      return localStorage.getItem('bk-lang') || 'ID';
+    } catch (e) {
+      return 'ID';
+    }
   });
   const [langMenuOpen, setLangMenuOpen] = useState(false);
 
-  // 2. Active Section for Navigation (Scroll-spy on Desktop & Mobile!)
-  const [activeNav, setActiveNav] = useState('about');
+  // 2. Active Section for Navigation + Top Scroll Progress Bar
+  const [activeNav, setActiveNav] = useState('home');
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   // Smart Navigation Auto-Hide on Scroll Down & Reveal on Scroll Up
   const [navVisible, setNavVisible] = useState(true);
@@ -74,7 +81,11 @@ export default function App() {
 
   // Persist language & RTL direction for Arabic
   useEffect(() => {
-    localStorage.setItem('bk-lang', lang);
+    try {
+      localStorage.setItem('bk-lang', lang);
+    } catch (e) {
+      // ignore storage errors
+    }
     document.documentElement.dir = currentLangObj.dir || 'ltr';
     document.documentElement.lang = lang.toLowerCase();
   }, [lang, currentLangObj.dir]);
@@ -90,47 +101,72 @@ export default function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Scroll-spy for Navigation Pills & Smart Auto-Hide + Back-to-Top Listener
-  useEffect(() => {
+  // Unified, Synchronous-on-Mount Scroll Controller (Prevents any refresh layout jump!)
+  useLayoutEffect(() => {
     const sectionIds = ['about', 'experience', 'projects', 'certificates', 'contact'];
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
 
-      // Back to top button visibility (appears once scrolled past 320px)
+    const syncScrollState = () => {
+      const currentScrollY = window.scrollY || window.pageYOffset || 0;
+
+      // 1. Top reading progress bar (0% .. 100%)
+      const docHeight =
+        document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const pct = docHeight > 0 ? Math.min(100, Math.max(0, (currentScrollY / docHeight) * 100)) : 0;
+      setScrollProgress(pct);
+
+      // 2. Hero scrollytelling stage progress
+      if (heroContainerRef.current) {
+        const rect = heroContainerRef.current.getBoundingClientRect();
+        const scrollableHeight = heroContainerRef.current.offsetHeight - window.innerHeight;
+        const scrolled = Math.min(Math.max(-rect.top, 0), scrollableHeight);
+        const progress = scrollableHeight > 0 ? scrolled / scrollableHeight : 0;
+        setHeroProgress(progress);
+      }
+
+      // 3. Back to top button visibility
       setShowBackToTop(currentScrollY > 320);
 
-      // Smart auto-hide navigation on scroll down, reveal on scroll up
+      // 4. Smart auto-hide navigation on scroll down, reveal on scroll up
       if (currentScrollY < 120) {
         setNavVisible(true);
       } else {
         const delta = currentScrollY - lastScrollYRef.current;
         if (delta > 8) {
-          // Scrolling DOWN -> Hide navigation to give maximum screen view!
           setNavVisible(false);
           setLangMenuOpen(false);
         } else if (delta < -8) {
-          // Scrolling UP -> Reveal navigation smoothly so user can switch sections!
           setNavVisible(true);
         }
       }
       lastScrollYRef.current = currentScrollY;
 
-      // Section scroll-spy
-      const scrollPos = currentScrollY + window.innerHeight * 0.35;
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sectionIds[i]);
-        if (el && el.offsetTop <= scrollPos) {
-          setActiveNav(sectionIds[i]);
-          break;
+      // 5. Section scroll-spy
+      if (currentScrollY < window.innerHeight * 0.4) {
+        setActiveNav('home');
+      } else {
+        const scrollPos = currentScrollY + window.innerHeight * 0.35;
+        for (let i = sectionIds.length - 1; i >= 0; i--) {
+          const el = document.getElementById(sectionIds[i]);
+          if (el && el.offsetTop <= scrollPos) {
+            setActiveNav(sectionIds[i]);
+            break;
+          }
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Run immediately before first browser paint so refreshing mid-page never glitches!
+    syncScrollState();
+
+    window.addEventListener('scroll', syncScrollState, { passive: true });
+    window.addEventListener('resize', syncScrollState, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', syncScrollState);
+      window.removeEventListener('resize', syncScrollState);
+    };
   }, []);
 
-  // Dynamic Animated Favicon ("BK" logo color cycles live in the browser tab every second!)
+  // Dynamic Animated Favicon ("BK" logo color cycles gently in the browser tab)
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -153,7 +189,7 @@ export default function App() {
 
     img.onload = () => {
       const updateFavicon = () => {
-        if (!ctx) return;
+        if (!ctx || document.hidden) return;
         ctx.clearRect(0, 0, 64, 64);
         ctx.filter = `hue-rotate(${hueAngle}deg) saturate(1.2)`;
         ctx.drawImage(img, 0, 0, 64, 64);
@@ -162,7 +198,7 @@ export default function App() {
       };
 
       updateFavicon();
-      intervalId = setInterval(updateFavicon, 1000);
+      intervalId = setInterval(updateFavicon, 2500);
     };
 
     return () => {
@@ -196,7 +232,7 @@ export default function App() {
         trailPoints.shift();
       }
     };
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -256,30 +292,18 @@ export default function App() {
     return () => clearInterval(interval);
   }, [t.hero.roles.length]);
 
-  // 4-Stage Scrollytelling Hero Controller
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!heroContainerRef.current) return;
-      const rect = heroContainerRef.current.getBoundingClientRect();
-      const scrollableHeight = heroContainerRef.current.offsetHeight - window.innerHeight;
-      const scrolled = Math.min(Math.max(-rect.top, 0), scrollableHeight);
-      const progress = scrollableHeight > 0 ? scrolled / scrollableHeight : 0;
-      setHeroProgress(progress);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Determine current scroll phase (1, 2, 3, 4) from scroll progress (0..1)
   const stage =
     heroProgress < 0.25
       ? 1
       : heroProgress < 0.52
-      ? 2
-      : heroProgress < 0.78
-      ? 3
-      : 4;
+        ? 2
+        : heroProgress < 0.78
+          ? 3
+          : 4;
+
+  const isStage1Active = stage === 1;
+  const isStage3Or4Active = stage === 3 || stage === 4;
 
   const handleCopyEmail = () => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -311,6 +335,7 @@ export default function App() {
       : t.certificates.items.filter((c) => c.category === certFilter);
 
   const navItems = [
+    { id: 'home', href: '#top', label: t.nav.home || 'Home', Icon: FiHome },
     { id: 'about', href: '#about', label: t.nav.about, Icon: FiUser },
     { id: 'experience', href: '#experience', label: t.nav.experience, Icon: FiBriefcase },
     { id: 'projects', href: '#projects', label: t.nav.projects, Icon: FiFolder },
@@ -320,6 +345,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#040406] text-[#f4f4f6] pb-20 md:pb-0 selection:bg-indigo-500/30 selection:text-indigo-200">
+      {/* 0. TOP SCROLL PROGRESS BAR (Recommendation #1: Thin 2px Gradient Line at Very Top) */}
+      <div
+        className="fixed top-0 left-0 right-0 h-[2px] z-50 pointer-events-none bg-transparent"
+        aria-hidden="true"
+      >
+        <div
+          className="h-full bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500 shadow-[0_0_10px_rgba(99,102,241,0.85)] transition-[width] duration-75 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
       {/* 1. GLOWING CURSOR TRAIL CANVAS OVERLAY */}
       <canvas
         ref={canvasRef}
@@ -332,11 +368,15 @@ export default function App() {
         className={`fixed top-2.5 sm:top-4 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none transition-all duration-300 ease-out ${
           navVisible
             ? 'translate-y-0 opacity-100'
-            : '-translate-y-16 opacity-0'
+            : '-translate-y-16 opacity-0 invisible'
         }`}
       >
-        <div className="max-w-5xl mx-auto h-11 sm:h-13 px-3 sm:px-4 rounded-2xl bg-[#090910]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.75)] flex items-center justify-between gap-2 pointer-events-auto">
-          {/* Brand Name (Clean text, no blue dot!) */}
+        <div
+          className={`max-w-5xl mx-auto h-11 sm:h-13 px-3 sm:px-4 rounded-2xl bg-[#090910]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.75)] flex items-center justify-between gap-2 ${
+            navVisible ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+        >
+          {/* Brand Name */}
           <a
             href="#top"
             className="text-xs sm:text-sm font-bold tracking-tight text-white hover:text-indigo-400 transition-all flex items-center px-2 py-1 rounded-xl hover:bg-white/[0.04] active:scale-95 shrink-0"
@@ -366,7 +406,7 @@ export default function App() {
             })}
           </nav>
 
-          {/* Right Control: Multi-Language Translator Dropdown + Quick GitHub Icon */}
+          {/* Right Control: GitHub + Multi-Language Translator Dropdown */}
           <div className="flex items-center gap-1.5">
             <a
               href={GITHUB_URL}
@@ -401,7 +441,7 @@ export default function App() {
               {langMenuOpen && (
                 <div className="absolute right-0 mt-2 w-44 rounded-2xl matte-card p-1.5 shadow-2xl border border-white/15 z-50">
                   <div className="px-2.5 py-1 text-[9px] font-mono uppercase tracking-wider text-zinc-500">
-                    Translate Language
+                    Pilih Bahasa
                   </div>
                   {LANGUAGES.map((item) => {
                     const active = item.code === lang;
@@ -413,7 +453,7 @@ export default function App() {
                           setLang(item.code);
                           setLangMenuOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] transition-all ${
+                        className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] transition-all cursor-pointer ${
                           active
                             ? 'bg-indigo-500/25 text-indigo-200 font-semibold'
                             : 'text-zinc-300 hover:bg-white/[0.06]'
@@ -439,8 +479,8 @@ export default function App() {
         aria-label="Mobile Navigation"
         className={`md:hidden fixed bottom-2.5 inset-x-3 z-40 bg-[#090910]/90 backdrop-blur-2xl border border-white/12 rounded-2xl p-1 shadow-[0_14px_38px_rgba(0,0,0,0.9)] flex items-center justify-between gap-1 transition-all duration-300 ease-out ${
           navVisible
-            ? 'translate-y-0 opacity-100 pointer-events-auto'
-            : 'translate-y-16 opacity-0 pointer-events-none'
+            ? 'translate-y-0 opacity-100 pointer-events-auto visible'
+            : 'translate-y-16 opacity-0 pointer-events-none invisible'
         }`}
       >
         {navItems.map(({ id, href, label, Icon }) => {
@@ -471,13 +511,13 @@ export default function App() {
 
       {/* =========================================================================
           3. SCROLL-TRIGGERED HERO SECTION
-             - Clean, fast, and responsive scroll height on mobile (190vh so it's close to About!)
-             - Perfectly placed text and large anime character without overlap on mobile screens!
+             - Clean, fast, and responsive scroll height
+             - Inactive stage layers are strictly `invisible pointer-events-none` so they NEVER block clicks!
          ========================================================================= */}
       <section
         id="top"
         ref={heroContainerRef}
-        className="relative h-[180vh] sm:h-[240vh] md:h-[320vh] w-full select-none"
+        className="relative h-[160vh] sm:h-[220vh] md:h-[280vh] w-full select-none"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#040406]">
           <div className="relative w-full max-w-6xl h-full mx-auto px-4 sm:px-6 flex items-center justify-center">
@@ -486,18 +526,19 @@ export default function App() {
               className="stage-layer absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{
                 opacity: stage === 1 || stage === 2 ? 1 : 0,
+                visibility: stage === 1 || stage === 2 ? 'visible' : 'hidden',
                 transform:
                   stage === 1
                     ? 'scale(1)'
                     : stage === 2
-                    ? 'scale(1.05)'
-                    : 'scale(1.1)',
+                      ? 'scale(1.05)'
+                      : 'scale(1.1)',
               }}
             >
-              <div className="relative w-[350px] sm:w-[410px] md:w-[460px] h-[375px] sm:h-[450px] md:h-[520px] flex items-center justify-center translate-y-3 md:translate-y-0">
+              <div className="relative w-[340px] sm:w-[400px] md:w-[450px] h-[360px] sm:h-[440px] md:h-[510px] flex items-center justify-center -translate-y-8 sm:-translate-y-6 md:translate-y-0">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage1.jpg')}
-                  alt="Bara Kusuma — Anime Front Portrait"
+                  alt="Bara Kusuma — Portrait"
                   className="w-full h-full object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.95)]"
                 />
               </div>
@@ -505,21 +546,22 @@ export default function App() {
 
             {/* ================= VISUAL 3: BARA'S ANIME FACING FRONT TYPING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end translate-y-24 sm:translate-y-28 md:translate-y-0 md:pr-2 lg:pr-6 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end translate-y-16 sm:translate-y-20 md:translate-y-0 md:pr-2 lg:pr-6 pointer-events-none"
               style={{
                 opacity: stage === 3 ? 1 : 0,
+                visibility: stage === 3 ? 'visible' : 'hidden',
                 transform:
                   stage === 3
                     ? 'scale(1)'
                     : stage < 3
-                    ? 'translateY(24px) scale(0.95)'
-                    : 'translateY(-16px) scale(0.95)',
+                      ? 'translateY(24px) scale(0.95)'
+                      : 'translateY(-16px) scale(0.95)',
               }}
             >
-              <div className="relative w-[360px] sm:w-[430px] md:w-[505px] lg:w-[550px] h-[345px] sm:h-[415px] md:h-[490px] flex items-center justify-center">
+              <div className="relative w-[340px] sm:w-[420px] md:w-[490px] lg:w-[530px] h-[330px] sm:h-[400px] md:h-[470px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage2.jpg')}
-                  alt="Bara Kusuma — Anime Laptop Workspace"
+                  alt="Bara Kusuma — Workspace"
                   className="w-full h-full object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)]"
                 />
               </div>
@@ -527,19 +569,20 @@ export default function App() {
 
             {/* ================= VISUAL 4: BARA'S ANIME CODING AT LAPTOP ================= */}
             <div
-              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end translate-y-24 sm:translate-y-28 md:translate-y-0 md:pr-0 lg:pr-4 pointer-events-none"
+              className="stage-layer absolute inset-0 flex items-center justify-center md:justify-end translate-y-16 sm:translate-y-20 md:translate-y-0 md:pr-0 lg:pr-4 pointer-events-none"
               style={{
                 opacity: stage === 4 ? 1 : 0,
+                visibility: stage === 4 ? 'visible' : 'hidden',
                 transform:
                   stage === 4
                     ? 'scale(1)'
                     : 'translateY(24px) scale(0.95)',
               }}
             >
-              <div className="relative w-[370px] sm:w-[450px] md:w-[530px] lg:w-[580px] h-[355px] sm:h-[430px] md:h-[510px] flex items-center justify-center">
+              <div className="relative w-[350px] sm:w-[430px] md:w-[510px] lg:w-[560px] h-[340px] sm:h-[410px] md:h-[490px] flex items-center justify-center">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage3.jpg')}
-                  alt="Bara Kusuma — Anime Live Coding"
+                  alt="Bara Kusuma — Coding"
                   className="w-full h-full object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)]"
                 />
               </div>
@@ -547,13 +590,15 @@ export default function App() {
 
             {/* ================= OVERLAY TEXT LAYER A: STAGE 1 ================= */}
             <div
-              className="stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-20 pb-16 sm:py-24 pointer-events-none"
+              className={`stage-layer relative z-20 w-full h-full flex flex-col justify-between pt-16 pb-20 sm:pt-20 sm:pb-24 pointer-events-none ${
+                isStage1Active ? 'visible' : 'invisible'
+              }`}
               style={{
-                opacity: stage === 1 ? 1 : 0,
-                transform: stage === 1 ? 'translateY(0px)' : 'translateY(-20px)',
+                opacity: isStage1Active ? 1 : 0,
+                transform: isStage1Active ? 'translateY(0px)' : 'translateY(-20px)',
               }}
             >
-              {/* Top Row: Role Title (Brought down closer to the anime head, perfectly spaced without overlap!) */}
+              {/* Top Row: Role Title */}
               <div className="text-center md:text-left md:grid md:grid-cols-12 md:gap-6 items-start">
                 <div className="md:col-span-4 z-20">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]">
@@ -571,17 +616,21 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Bottom Row: Introduction (Brought closer to the anime suit/bottom, tight and unified!) */}
-              <div className="md:grid md:grid-cols-12 md:gap-6 items-end pointer-events-auto">
+              {/* Bottom Row: Introduction */}
+              <div
+                className={`md:grid md:grid-cols-12 md:gap-6 items-end pb-3 sm:pb-0 ${
+                  isStage1Active ? 'pointer-events-auto' : 'pointer-events-none'
+                }`}
+              >
                 <div className="hidden md:block md:col-span-8" />
-                <div className="md:col-span-4 md:pl-4 text-center md:text-left max-w-[340px] sm:max-w-md mx-auto md:mx-0 p-2 sm:p-0 rounded-2xl bg-[#040406]/85 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
+                <div className="md:col-span-4 md:pl-4 text-center md:text-left max-w-[325px] sm:max-w-md mx-auto md:mx-0 p-2.5 sm:p-0 rounded-2xl bg-[#040406]/90 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
                   <div className="flex items-center justify-center md:justify-start gap-2 text-[9.5px] sm:text-xs font-mono uppercase tracking-widest text-indigo-400 md:text-zinc-500 mb-1 sm:mb-1.5">
                     <span>{t.hero.introLabel}</span>
                   </div>
                   <h2 className="text-xs sm:text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug mb-1 sm:mb-2">
                     {t.hero.introTitle}
                   </h2>
-                  <p className="text-[10.5px] sm:text-xs md:text-sm text-zinc-300 md:text-zinc-400 leading-relaxed">
+                  <p className="text-[10px] sm:text-xs md:text-sm text-zinc-300 md:text-zinc-400 leading-relaxed">
                     {t.hero.introDesc}
                   </p>
                 </div>
@@ -600,14 +649,19 @@ export default function App() {
 
             {/* ================= OVERLAY TEXT LAYER B: STAGE 3 & 4 ("HALO SAYA BARA KUSUMA") ================= */}
             <div
-              className="stage-layer absolute inset-x-4 sm:inset-x-6 top-20 sm:top-24 md:top-auto md:bottom-16 z-20 max-w-6xl mx-auto pointer-events-none"
+              className={`stage-layer absolute inset-x-4 sm:inset-x-6 top-16 sm:top-20 md:top-auto md:bottom-16 z-20 max-w-6xl mx-auto pointer-events-none ${
+                isStage3Or4Active ? 'visible' : 'invisible'
+              }`}
               style={{
-                opacity: stage === 3 || stage === 4 ? 1 : 0,
-                transform:
-                  stage === 3 || stage === 4 ? 'translateY(0px)' : 'translateY(24px)',
+                opacity: isStage3Or4Active ? 1 : 0,
+                transform: isStage3Or4Active ? 'translateY(0px)' : 'translateY(24px)',
               }}
             >
-              <div className="max-w-[340px] sm:max-w-md lg:max-w-lg mx-auto md:mx-0 text-center md:text-left pointer-events-auto p-3 sm:p-0 rounded-2xl bg-[#040406]/85 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none">
+              <div
+                className={`max-w-[325px] sm:max-w-md lg:max-w-lg mx-auto md:mx-0 text-center md:text-left p-3 sm:p-0 rounded-2xl bg-[#040406]/90 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border border-white/[0.08] md:border-0 shadow-xl md:shadow-none ${
+                  isStage3Or4Active ? 'pointer-events-auto' : 'pointer-events-none'
+                }`}
+              >
                 <p className="text-xs sm:text-2xl font-light tracking-[0.35em] text-white uppercase mb-0.5 sm:mb-1">
                   {t.hero.hello}
                 </p>
@@ -632,10 +686,8 @@ export default function App() {
 
       {/* =========================================================================
           4. ABOUT & SKILLS SECTION
-             - Real Profile Photo: starts grayscale, turns full original color on hover or tap!
-             - Super compact & balanced layout on mobile (2-column skills grid so it's never long)!
          ========================================================================= */}
-      <section id="about" className="relative pt-4 pb-12 sm:py-24 px-3.5 sm:px-6 max-w-6xl mx-auto">
+      <section id="about" className="relative pt-0 pb-12 sm:pt-4 sm:pb-24 px-3.5 sm:px-6 max-w-6xl mx-auto -mt-10 sm:-mt-6 md:mt-0">
         <div className="mb-5 sm:mb-10">
           <span className="text-[9.5px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-indigo-400 block mb-1">
             {t.about.tag}
@@ -646,12 +698,12 @@ export default function App() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 items-start">
-          {/* Left Column: Real Photo Profile Card (Full-width & clear on mobile!) */}
+          {/* Left Column: Real Photo Profile Card */}
           <div className="lg:col-span-4 matte-card rounded-2xl p-4 sm:p-5 max-w-[355px] sm:max-w-sm mx-auto lg:max-w-none w-full">
             <div
               onClick={() => setProfileColorActive((v) => !v)}
               className="relative w-full aspect-[4/4.1] rounded-xl overflow-hidden mb-3 sm:mb-4 bg-gradient-to-b from-indigo-950/50 to-zinc-950 border border-white/10 group cursor-pointer"
-              title="Hover atau klik untuk melihat warna asli"
+              title="Sentuh atau arahkan kursor untuk melihat warna asli"
             >
               <img
                 src={assetUrl('profile.jpg')}
@@ -675,7 +727,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Metadata Rows (The ONLY place where GPA 3.81 is displayed!) */}
+            {/* Metadata Rows */}
             <div className="space-y-2 sm:space-y-3 text-[10.5px] sm:text-xs border-t border-white/[0.07] pt-3">
               <div className="grid grid-cols-3 gap-1.5">
                 <span className="text-zinc-500">{t.about.basedInLabel}</span>
@@ -724,7 +776,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* SKILLS & TOOLS (2-Column Grid even on Mobile so it stays compact & neat!) */}
+            {/* SKILLS & TOOLS */}
             <div>
               <div className="text-[9.5px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-zinc-500 mb-2.5 sm:mb-3.5">
                 {t.about.skillsHeader}
@@ -740,11 +792,11 @@ export default function App() {
                   <div className="flex flex-wrap gap-1 sm:gap-1.5">
                     {[
                       'React',
+                      'Next.js',
                       'Vue.js',
                       'JavaScript',
                       'TypeScript',
-                      'HTML5',
-                      'CSS3',
+                      'HTML5 & CSS3',
                       'Tailwind CSS',
                       'Bootstrap',
                     ].map((s) => (
@@ -783,7 +835,7 @@ export default function App() {
                     <span className="truncate">{t.about.catMobile}</span>
                   </div>
                   <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {['React Native', 'Expo', 'Android APK', 'Mobile UI'].map((s) => (
+                    {['React Native', 'Expo', 'Android APK', 'Responsive Web'].map((s) => (
                       <span
                         key={s}
                         className="skill-pill text-[9.5px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full"
@@ -819,7 +871,7 @@ export default function App() {
                     <span className="truncate">{t.about.catNetSec}</span>
                   </div>
                   <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {['Git', 'GitHub', 'Vercel', 'Cisco NetSec'].map((s) => (
+                    {['Git & GitHub', 'Cisco CCNA', 'Network Security', 'Linux'].map((s) => (
                       <span
                         key={s}
                         className="skill-pill text-[9.5px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full"
@@ -836,8 +888,7 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          5. EXPERIENCE SECTION ("Where I've been" Sticky Left + Compact Cards)
-             - Card 4 ("PENDIDIKAN & KREDENSIAL") includes direct PDF links for the 3 certificates!
+          5. EXPERIENCE SECTION
          ========================================================================= */}
       <section
         id="experience"
@@ -856,7 +907,7 @@ export default function App() {
               {t.experience.desc}
             </p>
 
-            {/* Status Pill Badge (No green dot!) */}
+            {/* Status Pill Badge */}
             <div className="inline-flex items-center px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-[10.5px] sm:text-xs text-zinc-300">
               <span>
                 {t.experience.statusPrefix}{' '}
@@ -907,7 +958,7 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Direct 3 Certificate PDF Download/View Buttons inside the Education & Credentials Card! */}
+                {/* Direct 3 Certificate PDF Download/View Buttons inside the Education & Credentials Card */}
                 {exp.certLinks && exp.certLinks.length > 0 && (
                   <div className="mt-3.5 pt-3 border-t border-white/[0.07] flex flex-wrap items-center gap-1.5 sm:gap-2">
                     {exp.certLinks.map((certItem) => (
@@ -932,7 +983,7 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          6. PROJECTS SECTION ("Selected work" Compact & Clean Grid)
+          6. PROJECTS SECTION (Recommendation #3: 6 Real Projects + View All on GitHub CTA)
          ========================================================================= */}
       <section
         id="projects"
@@ -947,21 +998,21 @@ export default function App() {
               {t.projects.title}
             </h2>
           </div>
-          <p className="text-[11px] sm:text-sm text-zinc-400 max-w-xs sm:text-right">
+          <p className="text-[11px] sm:text-sm text-zinc-400 max-w-sm sm:text-right">
             {t.projects.desc}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
           {t.projects.items.map((proj, idx) => (
             <div
               key={idx}
-              className="matte-card rounded-2xl p-4 sm:p-6 flex flex-col justify-between group"
+              className="matte-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between group"
             >
               <div>
-                <div className="flex items-center justify-between gap-3 mb-3 sm:mb-5">
+                <div className="flex items-center justify-between gap-3 mb-3 sm:mb-4">
                   <div
-                    className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br ${proj.gradient} flex items-center justify-center text-white font-bold text-[11px] sm:text-sm shadow-lg`}
+                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${proj.gradient} flex items-center justify-center text-white font-bold text-[11px] sm:text-xs shadow-lg`}
                   >
                     {proj.badge}
                   </div>
@@ -969,13 +1020,13 @@ export default function App() {
                     {proj.type}
                   </span>
                 </div>
-                <div className="text-[9.5px] sm:text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-0.5">
+                <div className="text-[9.5px] sm:text-[10.5px] font-mono text-zinc-500 mb-1">
                   {proj.meta}
                 </div>
-                <h3 className="text-sm sm:text-xl font-bold text-white group-hover:text-indigo-400 transition-colors mb-1.5 leading-snug">
+                <h3 className="text-sm sm:text-lg font-bold text-white group-hover:text-indigo-400 transition-colors mb-1.5 leading-snug">
                   {proj.title}
                 </h3>
-                <p className="text-[11px] sm:text-sm text-zinc-400 leading-relaxed mb-3.5 sm:mb-5">
+                <p className="text-[11px] sm:text-xs text-zinc-400 leading-relaxed mb-3.5 sm:mb-4">
                   {proj.desc}
                 </p>
               </div>
@@ -985,7 +1036,7 @@ export default function App() {
                   {proj.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="skill-pill text-[9.5px] sm:text-[11px] px-2 py-0.5 rounded-md"
+                      className="skill-pill text-[9px] sm:text-[10.5px] px-2 py-0.5 rounded-md"
                     >
                       {tag}
                     </span>
@@ -996,7 +1047,7 @@ export default function App() {
                     href={proj.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10.5px] sm:text-[11px] font-mono text-indigo-400 hover:underline"
+                    className="inline-flex items-center gap-1 text-[10.5px] sm:text-[11px] font-medium text-indigo-400 hover:text-indigo-300 hover:underline shrink-0"
                   >
                     <span>{t.projects.viewCode}</span>
                     <FiArrowUpRight className="w-3.5 h-3.5" />
@@ -1006,10 +1057,24 @@ export default function App() {
             </div>
           ))}
         </div>
+
+        {/* Clean "View All Projects on GitHub" CTA Button */}
+        <div className="mt-6 sm:mt-9 flex justify-center">
+          <a
+            href={GITHUB_REPOS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/[0.04] hover:bg-indigo-600/20 border border-white/10 hover:border-indigo-500/40 text-xs sm:text-sm font-medium text-zinc-200 hover:text-white transition-all shadow-lg active:scale-95 group"
+          >
+            <FiGithub className="w-4 h-4 text-indigo-400 group-hover:text-white transition-colors" />
+            <span>{t.projects.viewAllGithub || 'Lihat Semua Proyek di GitHub'}</span>
+            <FiArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          </a>
+        </div>
       </section>
 
       {/* =========================================================================
-          7. CERTIFICATES SECTION (3 Official PDF Certificates: CCNAv7, NetSec, K3)
+          7. CERTIFICATES SECTION (Removed "PDF ASLI TERSEDIA" badge for a cleaner look)
          ========================================================================= */}
       <section
         id="certificates"
@@ -1041,7 +1106,7 @@ export default function App() {
                   key={f.key}
                   type="button"
                   onClick={() => setCertFilter(f.key)}
-                  className={`text-[10.5px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-medium transition-all active:scale-95 ${
+                  className={`text-[10.5px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-medium transition-all active:scale-95 cursor-pointer ${
                     active
                       ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
                       : 'skill-pill'
@@ -1054,7 +1119,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Certificates Grid (3 Verified PDF Certificates) */}
+        {/* Certificates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-5">
           {filteredCerts.map((cert) => (
             <div
@@ -1062,25 +1127,25 @@ export default function App() {
               className="matte-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between group"
             >
               <div>
-                {/* Top Meta Row */}
+                {/* Top Meta Row (Clean human label without "PDF ASLI TERSEDIA" badge) */}
                 <div className="flex items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-white/[0.07]">
-                  <span className="text-[9.5px] sm:text-[11px] font-mono font-semibold text-indigo-400">
+                  <span className="text-[10px] sm:text-[11px] font-mono font-medium text-indigo-400">
                     {cert.code}
                   </span>
-                  <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-                    {t.certificates.verifiedBadge}
+                  <span className="text-[10px] sm:text-[11px] text-zinc-500">
+                    {cert.date}
                   </span>
                 </div>
 
                 {/* Issuer & Title */}
-                <div className="text-[10px] sm:text-[11px] font-mono text-zinc-400 mb-0.5">
+                <div className="text-[10px] sm:text-[11px] text-zinc-400 mb-0.5">
                   {cert.issuer}
                 </div>
                 <h3 className="text-sm sm:text-lg font-bold text-white group-hover:text-indigo-400 transition-colors mb-1 leading-snug">
                   {cert.title}
                 </h3>
                 <div className="text-[10px] sm:text-[11px] text-zinc-500 mb-2">
-                  {cert.subIssuer} • {cert.date}
+                  {cert.subIssuer}
                 </div>
                 <p className="text-[11px] sm:text-xs text-zinc-400 leading-relaxed mb-3">
                   {cert.desc}
@@ -1101,7 +1166,7 @@ export default function App() {
 
               {/* Footer Actions */}
               <div className="pt-2.5 border-t border-white/[0.07] space-y-2">
-                <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-zinc-400">
+                <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-zinc-400">
                   <span>{t.certificates.instructorLabel}:</span>
                   <span className="text-zinc-200 font-medium">{cert.signatory}</span>
                 </div>
@@ -1110,7 +1175,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setSelectedCert(cert)}
-                    className="flex-1 py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/[0.05] hover:bg-indigo-500/20 text-zinc-200 text-[10.5px] sm:text-xs font-medium flex items-center justify-center gap-1.5 transition-all active:scale-95"
+                    className="flex-1 py-1.5 sm:py-2 px-2.5 rounded-xl bg-white/[0.05] hover:bg-indigo-500/20 text-zinc-200 text-[10.5px] sm:text-xs font-medium flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
                   >
                     <FiAward className="w-3.5 h-3.5 text-indigo-400" />
                     <span>{t.certificates.inspectBtn}</span>
@@ -1136,7 +1201,7 @@ export default function App() {
       </section>
 
       {/* =========================================================================
-          8. CONTACT SECTION (Email `stenkrama@gmail.com`, LinkedIn, and GitHub `@BekaGensss`!)
+          8. CONTACT SECTION
          ========================================================================= */}
       <section id="contact" className="relative py-12 sm:py-20 px-3.5 sm:px-6 max-w-6xl mx-auto">
         <div className="matte-card rounded-2xl sm:rounded-3xl p-5 sm:p-10 border border-white/[0.08]">
@@ -1165,7 +1230,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-zinc-200 font-medium text-[11px] sm:text-xs transition-all active:scale-95"
+                  className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-zinc-200 font-medium text-[11px] sm:text-xs transition-all active:scale-95 cursor-pointer"
                 >
                   {copiedEmail ? (
                     <FiCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -1182,7 +1247,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right Social Stack Column — Email, LinkedIn & GitHub with Icon! */}
+            {/* Right Social Stack Column */}
             <div className="lg:col-span-6 space-y-2 sm:space-y-2.5">
               {/* Email Row */}
               <a
@@ -1228,7 +1293,7 @@ export default function App() {
                 <FiArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
               </a>
 
-              {/* GitHub Row (Underneath LinkedIn with GitHub Icon!) */}
+              {/* GitHub Row */}
               <a
                 href={GITHUB_URL}
                 target="_blank"
@@ -1260,7 +1325,7 @@ export default function App() {
          ========================================================================= */}
       <footer className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-3 text-[10.5px] sm:text-xs text-zinc-500">
         <div>
-          © 2026 <span>Bara Kusuma</span>. {t.footer.rights}
+          © {new Date().getFullYear()} <span>Bara Kusuma</span>. {t.footer.rights}
         </div>
         <div className="flex items-center gap-2.5">
           <a
@@ -1305,7 +1370,7 @@ export default function App() {
           >
             <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4 sm:mb-5">
               <div>
-                <span className="text-[10px] sm:text-[11px] font-mono text-indigo-400 font-semibold block">
+                <span className="text-[10px] sm:text-[11px] font-mono text-indigo-400 font-medium block">
                   {selectedCert.code}
                 </span>
                 <h3 className="text-base sm:text-xl font-bold text-white mt-0.5">
@@ -1315,7 +1380,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setSelectedCert(null)}
-                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400"
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 cursor-pointer"
               >
                 <FiX className="w-4 h-4" />
               </button>
@@ -1324,17 +1389,17 @@ export default function App() {
             <div className="space-y-4 text-xs sm:text-sm">
               <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/[0.07] space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Issuer:</span>
+                  <span className="text-zinc-500">Penerbit:</span>
                   <span className="font-semibold text-zinc-200 text-right">
                     {selectedCert.issuer}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Organization:</span>
+                  <span className="text-zinc-500">Institusi:</span>
                   <span className="text-zinc-300 text-right">{selectedCert.subIssuer}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">Date:</span>
+                  <span className="text-zinc-500">Tanggal:</span>
                   <span className="font-mono text-indigo-400">{selectedCert.date}</span>
                 </div>
                 <div className="flex justify-between">
@@ -1363,7 +1428,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => handleCopySerial(selectedCert.serial)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 text-xs font-medium flex items-center gap-2 transition-all"
+                  className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 text-xs font-medium flex items-center gap-2 transition-all cursor-pointer"
                 >
                   {copiedSerial ? (
                     <FiCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -1393,7 +1458,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 11. MINIMALIST FLOATING BACK TO TOP BUTTON (Smooth, Tactile, Pure Luxury Dark Glass) */}
+      {/* 11. MINIMALIST FLOATING BACK TO TOP BUTTON */}
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -1401,8 +1466,8 @@ export default function App() {
         title="Kembali ke atas"
         className={`fixed z-40 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#0c0c16]/90 backdrop-blur-xl border border-white/15 text-zinc-300 hover:text-white hover:border-indigo-500/40 hover:bg-indigo-600/25 shadow-[0_10px_30px_rgba(0,0,0,0.85)] flex items-center justify-center transition-all duration-300 active:scale-90 group cursor-pointer ${
           showBackToTop
-            ? 'opacity-100 translate-y-0 pointer-events-auto'
-            : 'opacity-0 translate-y-6 pointer-events-none'
+            ? 'opacity-100 translate-y-0 pointer-events-auto visible'
+            : 'opacity-0 translate-y-6 pointer-events-none invisible'
         } ${
           navVisible
             ? 'bottom-16 sm:bottom-6 right-3.5 sm:right-6'
