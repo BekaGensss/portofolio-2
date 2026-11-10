@@ -42,8 +42,15 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
       img.onload = () => {
         if (cancelled) return;
         try {
-          const w = img.naturalWidth || img.width;
-          const h = img.naturalHeight || img.height;
+          // Limit canvas resolution on mobile/small screens to max 720px for instant processing
+          const maxDim = 720;
+          let w = img.naturalWidth || img.width;
+          let h = img.naturalHeight || img.height;
+          if (w > maxDim || h > maxDim) {
+            const scale = maxDim / Math.max(w, h);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+          }
           const canvas = document.createElement('canvas');
           canvas.width = w;
           canvas.height = h;
