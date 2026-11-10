@@ -29,10 +29,10 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
     let cancelled = false;
     let timerId = null;
 
-    const isStage2 = src.includes('stage2');
+    const isStage2Laptop = src.includes('anime-stage2.jpg');
     const isStage3 = src.includes('stage3');
-    // Stage 1 runs at 0ms immediately on load; Stage 2 & 3 run right after so Stage 1 never waits
-    const delayMs = isStage3 ? 120 : isStage2 ? 60 : 0;
+    // Stage 1 & Stage 2 nyengir run at 0ms; Stage 2 laptop runs at 60ms, Stage 3 runs at 120ms
+    const delayMs = isStage3 ? 120 : isStage2Laptop ? 60 : 0;
 
     const runCutout = () => {
       if (cancelled) return;
@@ -74,7 +74,7 @@ export default function CutoutAnimeImage({ src, alt, className = '', style = {} 
               return inHead || inSuitAndArms || inLaptop || inDesk;
             }
 
-            if (isStage2) {
+            if (isStage2Laptop) {
               // Stage 2: Front-facing typing at laptop
               const inHead =
                 Math.pow((nx - 0.5) / 0.158, 2) + Math.pow((ny - 0.235) / 0.175, 2) <= 1.0;

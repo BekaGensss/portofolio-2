@@ -521,24 +521,37 @@ export default function App() {
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#040406]">
           <div className="relative w-full max-w-6xl h-full mx-auto px-4 sm:px-6 flex items-center justify-center">
-            {/* ================= VISUAL 1 & 2: BARA'S ANIME FRONT PORTRAIT ================= */}
+            {/* ================= VISUAL 1: BARA'S ANIME FRONT PORTRAIT (CALM / ORIGINAL) ================= */}
             <div
               className="stage-layer absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{
-                opacity: stage === 1 || stage === 2 ? 1 : 0,
-                visibility: stage === 1 || stage === 2 ? 'visible' : 'hidden',
-                transform:
-                  stage === 1
-                    ? 'scale(1)'
-                    : stage === 2
-                      ? 'scale(1.05)'
-                      : 'scale(1.1)',
+                opacity: stage === 1 ? 1 : 0,
+                visibility: stage === 1 ? 'visible' : 'hidden',
+                transform: stage === 1 ? 'scale(1)' : 'scale(1.04)',
               }}
             >
               <div className="relative w-[340px] sm:w-[400px] md:w-[450px] h-[360px] sm:h-[440px] md:h-[510px] flex items-center justify-center -translate-y-8 sm:-translate-y-6 md:translate-y-0">
                 <CutoutAnimeImage
                   src={assetUrl('anime-stage1.jpg')}
                   alt="Bara Kusuma — Portrait"
+                  className="w-full h-full object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.95)]"
+                />
+              </div>
+            </div>
+
+            {/* ================= VISUAL 2: BARA'S ANIME NYENGIR (PASS SCROLL KOSONG / STAGE 2) ================= */}
+            <div
+              className="stage-layer absolute inset-0 flex items-center justify-center pointer-events-none"
+              style={{
+                opacity: stage === 2 ? 1 : 0,
+                visibility: stage === 2 ? 'visible' : 'hidden',
+                transform: stage === 2 ? 'scale(1.05)' : 'scale(1.08)',
+              }}
+            >
+              <div className="relative w-[340px] sm:w-[400px] md:w-[450px] h-[360px] sm:h-[440px] md:h-[510px] flex items-center justify-center -translate-y-8 sm:-translate-y-6 md:translate-y-0">
+                <CutoutAnimeImage
+                  src={assetUrl('anime-stage2-nyengir.jpg')}
+                  alt="Bara Kusuma — Nyengir Portrait"
                   className="w-full h-full object-contain drop-shadow-[0_24px_48px_rgba(0,0,0,0.95)]"
                 />
               </div>
